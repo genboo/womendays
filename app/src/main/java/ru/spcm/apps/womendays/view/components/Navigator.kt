@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.view.fragments.CalendarFragment
+import ru.spcm.apps.womendays.view.fragments.TodayFragment
 import ru.terrakok.cicerone.android.SupportFragmentNavigator
 import ru.terrakok.cicerone.commands.*
 
@@ -13,6 +15,8 @@ class Navigator(private val activity: FragmentActivity, fragmentManager: Fragmen
 
     override fun createFragment(screenKey: String, data: Any?): Fragment {
         when (screenKey) {
+            SCREEN_TODAY -> return TodayFragment()
+            SCREEN_CALENDAR -> return CalendarFragment()
         }
         return Fragment()
     }
@@ -40,14 +44,21 @@ class Navigator(private val activity: FragmentActivity, fragmentManager: Fragmen
         }
     }
 
+    fun goToToday() {
+        applyCommands(arrayOf(BackTo(null), Replace(SCREEN_TODAY, "")))
+    }
 
+    fun goToCalendar() {
+        applyCommands(arrayOf(BackTo(null), Replace(SCREEN_CALENDAR, "")))
+    }
 
     fun backTo() {
         applyCommand(Back())
     }
 
     companion object {
-        const val SCREEN_SETS = "screen_sets"
+        const val SCREEN_TODAY = "today"
+        const val SCREEN_CALENDAR = "calendar"
     }
 
 }

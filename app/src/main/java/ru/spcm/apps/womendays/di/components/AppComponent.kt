@@ -11,10 +11,11 @@ import ru.spcm.apps.womendays.di.ViewModelModule
 import ru.spcm.apps.womendays.di.modules.DbModule
 import ru.spcm.apps.womendays.di.modules.NavigationModule
 import ru.spcm.apps.womendays.view.activities.MainActivity
+import ru.spcm.apps.womendays.view.fragments.BaseFragment
 
 /**
  * Компонент di
- * Created by gen on 28.06.2018.
+ * Created by gen on 18.07.2018.
  */
 @Component(modules = [ViewModelModule::class, DbModule::class, NavigationModule::class])
 @Singleton
@@ -30,5 +31,6 @@ interface AppComponent {
 
     fun inject(activity: MainActivity)
 
+    fun inject(fragment: BaseFragment)
 
 }

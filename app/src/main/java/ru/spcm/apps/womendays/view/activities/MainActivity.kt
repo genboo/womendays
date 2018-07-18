@@ -5,6 +5,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.spcm.apps.womendays.App
 import ru.spcm.apps.womendays.R
@@ -27,10 +28,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
         bottomMenu.setOnNavigationItemSelectedListener(this)
+
+        navigator.goToToday()
     }
 
-    fun getBottomMenu(): BottomNavigationView {
-        return bottomMenu
+    fun getView(): View {
+        return mainLayout
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -39,18 +42,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onBackPressed() {
         navigator.backTo()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
+            R.id.nav_calendar -> navigator.goToCalendar()
+            R.id.nav_today -> navigator.goToToday()
         }
         return true
     }

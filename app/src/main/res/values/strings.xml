@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Эти дни…</string>
+
     <string name="menu_calendar">Календарь</string>
     <string name="menu_today">Сегодня</string>
+
+    <string name="action_cancel">Отменить</string>
 </resources>

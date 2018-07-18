@@ -12,7 +12,7 @@ import ru.spcm.apps.womendays.model.db.Database
 
 /**
  * Инициализация базы данных
- * Created by gen on 28.06.2018.
+ * Created by gen on 18.07.2018.
  */
 @Suppress("unused")
 @Module
