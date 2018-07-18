@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">womendays</string>
+    <string name="app_name">Эти дни…</string>
+    <string name="menu_calendar">Календарь</string>
+    <string name="menu_today">Сегодня</string>
 </resources>

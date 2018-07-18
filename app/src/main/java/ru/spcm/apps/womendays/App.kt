@@ -5,8 +5,14 @@ import com.crashlytics.android.Crashlytics
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
+import ru.spcm.apps.womendays.di.components.AppComponent
+import ru.spcm.apps.womendays.di.components.DaggerAppComponent
 
 class App : Application() {
+
+    val appComponent: AppComponent by lazy{
+        DaggerAppComponent.builder().context(this).build()
+    }
 
     override fun onCreate() {
         super.onCreate()
