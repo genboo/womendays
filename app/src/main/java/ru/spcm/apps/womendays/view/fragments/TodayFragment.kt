@@ -25,6 +25,7 @@ class TodayFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         updateToolbar()
 
+        dayWidget.setDaysLeftCount(10)
     }
 
     override fun inject() {

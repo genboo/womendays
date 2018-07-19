@@ -5,4 +5,7 @@
     <string name="menu_today">Сегодня</string>
 
     <string name="action_cancel">Отменить</string>
+
+    <string name="view_days_left">осталось</string>
+
 </resources>
