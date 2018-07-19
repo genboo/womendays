@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.view.adapters.CalendarPageAdapter
 import java.util.*
 
 /**
- * Карта
+ * Календарь
  * Created by gen on 18.07.2018.
  */
 
@@ -24,8 +25,8 @@ class CalendarFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         updateToolbar()
-        calendar.setDate(Date().time, false, true)
-        calendar.firstDayOfWeek = Calendar.MONDAY
+
+        calendar.adapter = CalendarPageAdapter(requireContext())
 
     }
 
@@ -34,7 +35,7 @@ class CalendarFragment : BaseFragment() {
     }
 
     override fun getTitle(): String {
-        return getString(R.string.menu_today)
+        return getString(R.string.menu_calendar)
     }
 
 }

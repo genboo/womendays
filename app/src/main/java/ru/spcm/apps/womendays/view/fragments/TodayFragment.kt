@@ -7,7 +7,7 @@ import ru.spcm.apps.womendays.R
 import java.util.*
 
 /**
- * Карта
+ * Текущиий день
  * Created by gen on 18.07.2018.
  */
 
