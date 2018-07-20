@@ -26,8 +26,6 @@ class CalendarFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         updateToolbar()
 
-        calendar.adapter = CalendarPageAdapter(requireContext())
-
     }
 
     override fun inject() {

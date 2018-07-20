@@ -8,4 +8,13 @@
 
     <string name="view_days_left">осталось</string>
 
+    <string name="calendar_monday">пн</string>
+    <string name="calendar_tuesday">вт</string>
+    <string name="calendar_wednesday">ср</string>
+    <string name="calendar_thursday">чт</string>
+    <string name="calendar_friday">пт</string>
+    <string name="calendar_saturday">сб</string>
+    <string name="calendar_sunday">вс</string>
+
+
 </resources>

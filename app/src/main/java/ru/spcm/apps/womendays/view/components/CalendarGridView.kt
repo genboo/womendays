@@ -2,7 +2,6 @@ package ru.spcm.apps.womendays.view.components
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.GridView
 
 class CalendarGridView(context: Context, attrs: AttributeSet, defStyle: Int) : GridView(context, attrs, defStyle) {

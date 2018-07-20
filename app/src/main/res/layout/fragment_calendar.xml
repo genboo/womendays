@@ -18,17 +18,10 @@
         android:background="@color/colorLight"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/calendarTitle"
+        <ru.spcm.apps.womendays.view.components.CalendarView
+            android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Календарь" />
-
-        <ru.spcm.apps.womendays.view.components.CalendarViewPager
-            android:id="@+id/calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/calendarTitle" />
+            android:layout_height="wrap_content" />
 
     </android.support.constraint.ConstraintLayout>
 
