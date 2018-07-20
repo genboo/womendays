@@ -33,7 +33,7 @@ class CalendarPageAdapter(val context: Context, private val calendar: Calendar) 
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        val adapter = CalendarDayAdapter(context, R.layout.list_item_day, days, month)
+        val adapter = CalendarDaysAdapter(context, R.layout.list_item_day, days, month)
         view.adapter = adapter
 
         container.addView(view)

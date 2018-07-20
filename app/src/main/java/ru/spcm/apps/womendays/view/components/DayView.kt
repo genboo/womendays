@@ -25,11 +25,9 @@ class DayView(context: Context, attrs: AttributeSet) : LinearLayout(context, att
         backgroundPaint.isAntiAlias = true
         backgroundPaint.style = Paint.Style.FILL_AND_STROKE
 
-        val view = LayoutInflater.from(context).inflate(R.layout.layout_today, this, false)
-        addView(view)
+        LayoutInflater.from(context).inflate(R.layout.layout_today, this)
 
-        daysCounter = view.findViewById(R.id.daysLeftCount)
-
+        daysCounter = findViewById(R.id.daysLeftCount)
         daysCounter.text = "$daysLeftCount"
 
     }

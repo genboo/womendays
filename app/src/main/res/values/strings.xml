@@ -16,5 +16,16 @@
     <string name="calendar_saturday">сб</string>
     <string name="calendar_sunday">вс</string>
 
-
+    <string name="calendar_january">Январь</string>
+    <string name="calendar_february">Февраль</string>
+    <string name="calendar_march">Март</string>
+    <string name="calendar_april">Апрель</string>
+    <string name="calendar_may">Май</string>
+    <string name="calendar_june">Июнь</string>
+    <string name="calendar_july">Июль</string>
+    <string name="calendar_august">Август</string>
+    <string name="calendar_september">Сентябрь</string>
+    <string name="calendar_october">Октябрь</string>
+    <string name="calendar_november">Ноябрь</string>
+    <string name="calendar_december">Декабрь</string>
 </resources>

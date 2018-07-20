@@ -28,8 +28,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
         bottomMenu.setOnNavigationItemSelectedListener(this)
-
-        navigator.goToCalendar()
+        navigator.goToToday()
     }
 
     fun getView(): View {
