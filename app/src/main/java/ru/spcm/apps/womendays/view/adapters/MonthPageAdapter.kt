@@ -10,7 +10,7 @@ import ru.spcm.apps.womendays.view.components.CalendarGridView
 import java.util.*
 
 
-class CalendarPageAdapter(val context: Context, private val calendar: Calendar) : PagerAdapter() {
+class MonthPageAdapter(val context: Context, private val calendar: Calendar) : PagerAdapter() {
 
     private val inflater = LayoutInflater.from(context)
 

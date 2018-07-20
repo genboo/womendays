@@ -6,34 +6,64 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import ru.spcm.apps.womendays.R
-import ru.spcm.apps.womendays.view.adapters.CalendarPageAdapter
+import ru.spcm.apps.womendays.view.adapters.MonthPageAdapter
+import ru.spcm.apps.womendays.view.adapters.WeekPageAdapter
 import java.util.*
 
-class CalendarView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : FrameLayout(context, attrs, defStyle) {
 
     private val currentDate = GregorianCalendar()
-    private var calendarPager: CalendarViewPager
+    private lateinit var calendarPager: CalendarViewPager
+
+    constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
     init {
-        val inflater = LayoutInflater.from(context)
 
-        inflater.inflate(R.layout.layout_calendar, this)
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.CalendarView, defStyle, 0)
+        val type = attributes.getInt(R.styleable.CalendarView_type, CALENDAR_TYPE_FULL)
 
-        currentDate.add(Calendar.MONTH, -CalendarPageAdapter.CALENDAR_SIZE / 2)
+        attributes.recycle()
+
         currentDate.firstDayOfWeek = Calendar.MONDAY
 
+        when (type) {
+            CALENDAR_TYPE_WEEK -> prepareWeekCalendar()
+            else -> prepareFullCalendar()
+        }
+
+    }
+
+    private fun prepareWeekCalendar() {
+        LayoutInflater.from(context).inflate(R.layout.layout_calendar_week, this)
         calendarPager = findViewById(R.id.calendarViewPager)
+
+        currentDate.add(Calendar.WEEK_OF_YEAR, -WeekPageAdapter.CALENDAR_SIZE / 2)
+
+        calendarPager.adapter = WeekPageAdapter(context, currentDate)
+        calendarPager.currentItem = WeekPageAdapter.CALENDAR_SIZE / 2
+    }
+
+    private fun prepareFullCalendar() {
+        LayoutInflater.from(context).inflate(R.layout.layout_calendar, this)
+        calendarPager = findViewById(R.id.calendarViewPager)
+
+        currentDate.add(Calendar.MONTH, -MonthPageAdapter.CALENDAR_SIZE / 2)
+
         val currentDateLabel = findViewById<TextView>(R.id.currentDateLabel)
 
         if (!isInEditMode) {
             calendarPager.clearOnPageChangeListeners()
             calendarPager.addOnPageChangeListener(CalendarOnPageChangeListener(currentDateLabel, currentDate))
         }
-        currentDateLabel.setOnClickListener { calendarPager.currentItem = CalendarPageAdapter.CALENDAR_SIZE / 2 }
+        currentDateLabel.setOnClickListener { calendarPager.currentItem = MonthPageAdapter.CALENDAR_SIZE / 2 }
 
-        calendarPager.adapter = CalendarPageAdapter(context, currentDate)
-        calendarPager.currentItem = CalendarPageAdapter.CALENDAR_SIZE / 2
+        calendarPager.adapter = MonthPageAdapter(context, currentDate)
+        calendarPager.currentItem = MonthPageAdapter.CALENDAR_SIZE / 2
+    }
 
+    companion object {
+        const val CALENDAR_TYPE_FULL = 0
+        const val CALENDAR_TYPE_WEEK = 1
     }
 
 }

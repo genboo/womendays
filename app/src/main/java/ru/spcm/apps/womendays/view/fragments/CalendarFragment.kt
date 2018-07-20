@@ -2,10 +2,7 @@ package ru.spcm.apps.womendays.view.fragments
 
 import android.os.Bundle
 import android.view.*
-import kotlinx.android.synthetic.main.fragment_calendar.*
 import ru.spcm.apps.womendays.R
-import ru.spcm.apps.womendays.view.adapters.CalendarPageAdapter
-import java.util.*
 
 /**
  * Календарь

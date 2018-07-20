@@ -10,7 +10,7 @@ import android.widget.TextView
 import ru.spcm.apps.womendays.R
 import java.util.*
 
-class CalendarDaysAdapter(context: Context, val resource: Int, dates: ArrayList<Date>, private val month: Int) : ArrayAdapter<Date>(context, resource, dates) {
+class CalendarDaysAdapter(context: Context, val resource: Int, dates: ArrayList<Date>, private val month: Int?) : ArrayAdapter<Date>(context, resource, dates) {
 
     private val inflater = LayoutInflater.from(context)
     private val now = GregorianCalendar()
@@ -34,7 +34,7 @@ class CalendarDaysAdapter(context: Context, val resource: Int, dates: ArrayList<
     }
 
     private fun isCurrentMonth(day: Calendar): Boolean {
-        return day.get(Calendar.MONTH) == month
+        return month == null || day.get(Calendar.MONTH) == month
     }
 
     private fun isNow(day: Calendar): Boolean {
