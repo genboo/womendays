@@ -9,12 +9,15 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import ru.spcm.apps.womendays.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DayView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
     private val backgroundPaint = Paint()
 
     private var daysCounter: TextView
+    private var todayLabel: TextView
 
     private var daysLeftCount: Int = 0
 
@@ -29,6 +32,11 @@ class DayView(context: Context, attrs: AttributeSet) : LinearLayout(context, att
 
         daysCounter = findViewById(R.id.daysLeftCount)
         daysCounter.text = "$daysLeftCount"
+
+        todayLabel = findViewById(R.id.today)
+
+        val dateFormatter = SimpleDateFormat("E, dd MMMM", Locale.getDefault())
+        todayLabel.text = dateFormatter.format(Date())
 
     }
 
