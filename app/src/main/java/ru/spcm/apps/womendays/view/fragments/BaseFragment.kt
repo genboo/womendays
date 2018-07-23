@@ -60,7 +60,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected fun showSnack(text: Int, action: View.OnClickListener?) {
-        val snackBar = Snackbar.make((activity as MainActivity).getView(), text, Snackbar.LENGTH_LONG)
+        val snackBar = Snackbar.make(view!!, text, Snackbar.LENGTH_LONG)
         if (action != null) {
             snackBar.setAction(ru.spcm.apps.womendays.R.string.action_cancel, action)
         }

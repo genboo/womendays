@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.MonthPageAdapter
 import ru.spcm.apps.womendays.view.adapters.WeekPageAdapter
 import java.util.*
@@ -33,21 +35,25 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
 
     }
 
+    fun setEvents(events: List<Event>) {
+        (calendarPager.adapter as EventsPagerAdapter).setEvents(events)
+    }
+
     private fun prepareWeekCalendar() {
         LayoutInflater.from(context).inflate(R.layout.layout_calendar_week, this)
         calendarPager = findViewById(R.id.calendarViewPager)
 
-        currentDate.add(Calendar.WEEK_OF_YEAR, -WeekPageAdapter.CALENDAR_SIZE / 2)
+        currentDate.add(Calendar.WEEK_OF_YEAR, -EventsPagerAdapter.CALENDAR_SIZE / 2)
 
         calendarPager.adapter = WeekPageAdapter(context, currentDate)
-        calendarPager.currentItem = WeekPageAdapter.CALENDAR_SIZE / 2
+        calendarPager.currentItem = EventsPagerAdapter.CALENDAR_SIZE / 2
     }
 
     private fun prepareFullCalendar() {
         LayoutInflater.from(context).inflate(R.layout.layout_calendar, this)
         calendarPager = findViewById(R.id.calendarViewPager)
 
-        currentDate.add(Calendar.MONTH, -MonthPageAdapter.CALENDAR_SIZE / 2)
+        currentDate.add(Calendar.MONTH, -EventsPagerAdapter.CALENDAR_SIZE / 2)
 
         val currentDateLabel = findViewById<TextView>(R.id.currentDateLabel)
 
@@ -55,10 +61,10 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
             calendarPager.clearOnPageChangeListeners()
             calendarPager.addOnPageChangeListener(CalendarOnPageChangeListener(currentDateLabel, currentDate))
         }
-        currentDateLabel.setOnClickListener { calendarPager.currentItem = MonthPageAdapter.CALENDAR_SIZE / 2 }
+        currentDateLabel.setOnClickListener { calendarPager.currentItem = EventsPagerAdapter.CALENDAR_SIZE / 2 }
 
         calendarPager.adapter = MonthPageAdapter(context, currentDate)
-        calendarPager.currentItem = MonthPageAdapter.CALENDAR_SIZE / 2
+        calendarPager.currentItem = EventsPagerAdapter.CALENDAR_SIZE / 2
     }
 
     companion object {

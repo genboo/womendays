@@ -9,6 +9,7 @@ import javax.inject.Singleton
 import dagger.Module
 import dagger.Provides
 import ru.spcm.apps.womendays.model.db.Database
+import ru.spcm.apps.womendays.model.db.dao.EventsDao
 
 /**
  * Инициализация базы данных
@@ -31,6 +32,12 @@ class DbModule {
                 .databaseBuilder(context, Database::class.java, DB_NAME)
 
                 .build()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideEventsDao(db: Database): EventsDao {
+        return db.eventsDao()
     }
 
 

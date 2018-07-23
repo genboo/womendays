@@ -6,7 +6,19 @@
     android:layout_height="match_parent"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    tools:layout_height="24dp"
+    tools:layout_width="24dp">
+
+    <ImageView
+        android:id="@+id/iconSex"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_calendar"
+        android:tint="@color/colorPrimary"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/dayNumber"

@@ -1,10 +1,12 @@
 package ru.spcm.apps.womendays.view.fragments
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
-import java.util.*
+import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
  * Текущиий день
@@ -25,7 +27,25 @@ class TodayFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         updateToolbar()
 
+        val viewModel = getViewModel(this, DayViewModel::class.java)
+        viewModel.events.observe(this, Observer { observeEvents(it) })
+
         dayWidget.setDaysLeftCount(10)
+
+        fab.setOnClickListener {
+            viewModel.save(Event.Type.SEX).observe(this, Observer { id ->
+                showSnack(R.string.action_added, View.OnClickListener {
+                    viewModel.delete(id)
+                    showSnack(R.string.action_canceled, null)
+                })
+            })
+        }
+    }
+
+    private fun observeEvents(data: List<Event>?) {
+        if (data != null) {
+            calendarView.setEvents(data)
+        }
     }
 
     override fun inject() {

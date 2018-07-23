@@ -6,11 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.tools.DateHelper
 import java.util.*
+import kotlin.collections.HashMap
 
-class CalendarDaysAdapter(context: Context, val resource: Int, dates: ArrayList<Date>, private val month: Int?) : ArrayAdapter<Date>(context, resource, dates) {
+class CalendarDaysAdapter(context: Context,
+                          val resource: Int,
+                          dates: ArrayList<Date>,
+                          private val events: HashMap<String, ArrayList<Event>>,
+                          private val month: Int?) : ArrayAdapter<Date>(context, resource, dates) {
 
     private val inflater = LayoutInflater.from(context)
     private val now = GregorianCalendar()
@@ -24,8 +32,22 @@ class CalendarDaysAdapter(context: Context, val resource: Int, dates: ArrayList<
         val dayNumber = view.findViewById<TextView>(R.id.dayNumber)
         dayNumber.text = day.get(Calendar.DAY_OF_MONTH).toString()
 
+        val iconSex = view.findViewById<ImageView>(R.id.iconSex)
+        iconSex.visibility = View.GONE
+
+        val date = DateHelper.formatYearMonthDay(day.time)
+        if (events.containsKey(date)) {
+            events[date]?.forEach {
+                when (it.type) {
+                    Event.Type.SEX -> iconSex.visibility = View.VISIBLE
+                    Event.Type.MONTHLY -> {
+                    }
+                }
+            }
+        }
+
         when {
-            isNow(day) -> dayNumber.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+            isNow(day) -> dayNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
             isCurrentMonth(day) -> dayNumber.setTextColor(ContextCompat.getColor(context, R.color.colorText))
             else -> dayNumber.setTextColor(ContextCompat.getColor(context, R.color.colorHint))
         }
