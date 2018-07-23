@@ -11,20 +11,23 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Main">
+        android:theme="@style/AppTheme.Main.NoActionBar">
         <activity
             android:name=".view.activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Main.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.activities.SettingsActivity"
+            android:launchMode="singleTask" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="fbdaf7e080720e8dc5931742be529681b10279f5" />

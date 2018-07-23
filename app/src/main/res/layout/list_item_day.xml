@@ -7,16 +7,16 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    tools:layout_height="24dp"
-    tools:layout_width="24dp">
+    tools:maxHeight="30dp"
+    tools:maxWidth="74dp">
 
     <ImageView
         android:id="@+id/iconSex"
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_calendar"
-        android:tint="@color/colorPrimary"
+        android:src="@drawable/ic_heart"
+        android:tint="@color/colorPrimaryDark"
         android:visibility="gone"
         tools:visibility="visible" />
 

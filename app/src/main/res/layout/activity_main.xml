@@ -23,6 +23,29 @@
         android:background="@color/colorPrimary"
         app:itemIconTint="@color/bottom_nav_item_style"
         app:itemTextColor="@color/bottom_nav_item_style"
+        app:layout_behavior="ru.spcm.apps.womendays.view.components.BottomNavigationBehavior"
         app:menu="@menu/bottom_menu" />
+
+    <FrameLayout
+        android:layout_width="68dp"
+        android:layout_height="76dp"
+        android:layout_gravity="top"
+        app:layout_anchor="@id/bottomMenu"
+        app:layout_anchorGravity="top|end"
+        app:layout_behavior="ru.spcm.apps.womendays.view.components.BottomNavigationFABBehavior">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:tint="@android:color/white"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_plus"
+            app:useCompatPadding="true"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

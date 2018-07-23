@@ -36,7 +36,7 @@ open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
         val view: CalendarGridView = inflater.inflate(R.layout.layout_calendar_grid, container, false) as CalendarGridView
 
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        val monthBeginningCell = dayOfWeek + if (dayOfWeek == calendar.firstDayOfWeek || dayOfWeek == 1) 5 else -2
+        val monthBeginningCell = dayOfWeek + if ((dayOfWeek == calendar.firstDayOfWeek && month != null) || dayOfWeek == 1) 5 else -2
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell)
 
         val days = ArrayList<Date>()
@@ -63,6 +63,10 @@ open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
         container.removeView(obj as View)
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return PagerAdapter.POSITION_NONE
     }
 
     companion object {

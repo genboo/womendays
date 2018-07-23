@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
+import android.transition.Fade
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.view.fragments.CalendarFragment
 import ru.spcm.apps.womendays.view.fragments.TodayFragment

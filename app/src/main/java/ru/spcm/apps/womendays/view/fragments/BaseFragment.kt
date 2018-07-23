@@ -3,6 +3,7 @@ package ru.spcm.apps.womendays.view.fragments
 import android.arch.lifecycle.*
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.transition.TransitionInflater
@@ -60,7 +61,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected fun showSnack(text: Int, action: View.OnClickListener?) {
-        val snackBar = Snackbar.make(view!!, text, Snackbar.LENGTH_LONG)
+        val snackBar = Snackbar.make((activity as MainActivity).getView(), text, Snackbar.LENGTH_LONG)
         if (action != null) {
             snackBar.setAction(ru.spcm.apps.womendays.R.string.action_cancel, action)
         }
@@ -71,6 +72,9 @@ abstract class BaseFragment : Fragment() {
         toolbar?.title = title
     }
 
+    fun getFab(): FloatingActionButton {
+        return (activity as MainActivity).getFab()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

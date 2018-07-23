@@ -1,8 +1,12 @@
 package ru.spcm.apps.womendays.view.fragments
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.*
+import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
  * Календарь
@@ -23,6 +27,15 @@ class CalendarFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         updateToolbar()
 
+        val viewModel = getViewModel(this, DayViewModel::class.java)
+        viewModel.events.observe(this, Observer { observeEvents(it) })
+        calendarView.postDelayed({ viewModel.loadEvents() }, 200)
+    }
+
+    private fun observeEvents(data: List<Event>?) {
+        if (data != null) {
+            calendarView.setEvents(data)
+        }
     }
 
     override fun inject() {

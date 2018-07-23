@@ -2,9 +2,12 @@ package ru.spcm.apps.womendays.viewmodel
 
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.repositiries.EventsRepo
+import ru.spcm.apps.womendays.tools.AbsentLiveData
 import javax.inject.Inject
 
 
@@ -15,7 +18,21 @@ import javax.inject.Inject
 class DayViewModel @Inject
 internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
-    val events = eventsRepo.getEvents()
+    private val eventsSwitcher = MutableLiveData<Boolean>()
+    val events: LiveData<List<Event>>
+
+    init {
+        events = Transformations.switchMap(eventsSwitcher) {
+            if (it) {
+                return@switchMap eventsRepo.getEvents()
+            }
+            return@switchMap AbsentLiveData.create<List<Event>>()
+        }
+    }
+
+    fun loadEvents() {
+        eventsSwitcher.postValue(true)
+    }
 
     fun save(type: Event.Type): LiveData<Long> {
         return eventsRepo.save(Event(type))
