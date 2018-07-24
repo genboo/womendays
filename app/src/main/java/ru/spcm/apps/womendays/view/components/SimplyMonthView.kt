@@ -9,10 +9,15 @@ import ru.spcm.apps.womendays.R
 import java.text.NumberFormat
 import java.util.*
 import android.text.format.DateFormat
+import android.view.MotionEvent
+import ru.spcm.apps.womendays.tools.Logger
 import java.text.SimpleDateFormat
 
 
 class SimplyMonthView(context: Context) : View(context) {
+
+    private var paddedWidth = 0
+    private var paddedHeight = 0
 
     private val monthPaint = Paint()
     private val dayPaint = Paint()
@@ -33,6 +38,8 @@ class SimplyMonthView(context: Context) : View(context) {
     private var weekStart = DEFAULT_WEEK_START
     private var dayOfWeekStart = 0
 
+    private var now = 0
+
     private var monthLabel = ""
 
     private var monthLabelHeight: Float = 0f
@@ -40,16 +47,23 @@ class SimplyMonthView(context: Context) : View(context) {
 
     private val dayFormatter = NumberFormat.getIntegerInstance(Locale.getDefault())
 
+    private var mainTextColor: Int = 0
+    private var todayTextColor: Int = 0
+
     init {
+
+        mainTextColor = ContextCompat.getColor(context, R.color.colorText)
+        todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
+
         monthLabelHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_height).toFloat()
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
 
-        monthPaint.color = ContextCompat.getColor(context, R.color.colorText)
+        monthPaint.color = mainTextColor
         monthPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_size).toFloat()
         monthPaint.textAlign = Paint.Align.CENTER
         monthPaint.isAntiAlias = true
 
-        dayPaint.color = ContextCompat.getColor(context, R.color.colorText)
+        dayPaint.color = mainTextColor
         dayPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
         dayPaint.textAlign = Paint.Align.CENTER
         dayPaint.isAntiAlias = true
@@ -81,6 +95,11 @@ class SimplyMonthView(context: Context) : View(context) {
         for (day in 1..daysInMonth) {
             val colCenter = cellWidth * col + cellWidth / 2f
 
+            if (now == day) {
+                dayPaint.color = todayTextColor
+            } else {
+                dayPaint.color = mainTextColor
+            }
 
             canvas.drawText(dayFormatter.format(day), colCenter, rowCenter, dayPaint)
 
@@ -97,8 +116,20 @@ class SimplyMonthView(context: Context) : View(context) {
         daysInMonth = getDaysInMonth(month, year)
         dayOfWeekStart = calendar.get(Calendar.DAY_OF_WEEK)
         this.weekStart = weekStart
+        val today = Calendar.getInstance()
+        for (day in 1..daysInMonth) {
+            if (sameDay(today, day)) {
+                now = day
+            }
+        }
 
         updateMonthYearLabel()
+    }
+
+    private fun sameDay(today: Calendar, day: Int): Boolean {
+        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+                today.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
+                && day == today.get(Calendar.DAY_OF_MONTH)
     }
 
     private fun getDaysInMonth(month: Int, year: Int): Int =
@@ -125,19 +156,87 @@ class SimplyMonthView(context: Context) : View(context) {
         monthLabel = formatter.format(calendar.time).capitalize()
     }
 
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = (event.x + 0.5f).toInt()
+        val y = (event.y + 0.5f).toInt()
+        val action = event.action
+        when (action) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                val touchedItem = getDayAtLocation(x, y)
+                Logger.e("day : $touchedItem")
+//                mIsTouchHighlighted = true
+//                if (mHighlightedDay !== touchedItem) {
+//                    mHighlightedDay = touchedItem
+//                    mPreviouslyHighlightedDay = touchedItem
+//                    invalidate()
+//                }
+                if (action == MotionEvent.ACTION_DOWN && touchedItem < 0) {
+                    // Touch something that's not an item, reject event.
+                    return false
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                val clickedDay = getDayAtLocation(x, y)
+//                onDayClicked(clickedDay)
+//                // Reset touched day on stream end.
+//                mHighlightedDay = -1
+//                mIsTouchHighlighted = false
+                invalidate()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+//                mHighlightedDay = -1
+//                mIsTouchHighlighted = false
+                invalidate()
+            }
+        }
+
+        return true
+    }
+
+    private fun getDayAtLocation(x: Int, y: Int): Int {
+        val paddedX = x - paddingLeft
+        if (paddedX < 0 || paddedX >= paddedWidth) {
+            return -1
+        }
+        val headerHeight = monthLabelHeight + cellHeight
+        val paddedY = y - paddingTop
+        if (paddedY < headerHeight || paddedY >= paddedHeight) {
+            return -1
+        }
+
+        val row = (paddedY - headerHeight.toInt()) / cellHeight.toInt()
+        val col = paddedX * DAYS_IN_WEEK / paddedWidth
+        val index = col + row * DAYS_IN_WEEK
+        val day = index + 1 - findDayOffset()
+        return if (!isValidDayOfMonth(day)) {
+            -1
+        } else {
+            day
+        }
+    }
+
+    private fun isValidDayOfMonth(day: Int): Boolean {
+        return day in 1..daysInMonth
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val preferredHeight = (cellHeight * (MAX_WEEKS_IN_MONTH + 2)
+        val preferredHeight = (cellHeight * MAX_WEEKS_IN_MONTH
                 + cellHeight + monthLabelHeight
                 + paddingTop + paddingBottom)
         val preferredWidth = (cellWidth * DAYS_IN_WEEK + paddingStart + paddingEnd)
-        val resolvedWidth = View.resolveSize(preferredWidth, widthMeasureSpec)
-        val resolvedHeight = View.resolveSize(preferredHeight.toInt(), heightMeasureSpec)
+        val resolvedWidth = resolveSize(preferredWidth, widthMeasureSpec)
+        val resolvedHeight = resolveSize(preferredHeight.toInt(), heightMeasureSpec)
         setMeasuredDimension(resolvedWidth, resolvedHeight)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         val w = right - left
+        val h = bottom - top
+
         cellWidth = w / DAYS_IN_WEEK
+
+        paddedWidth = w - paddingEnd - paddingStart
+        paddedHeight = h - paddingBottom - paddingTop
     }
 
     companion object {
