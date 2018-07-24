@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             app:type="week" />
 
-        <ru.spcm.apps.womendays.view.components.DayView
+        <ru.spcm.apps.womendays.view.components.TodayView
             android:id="@+id/dayWidget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

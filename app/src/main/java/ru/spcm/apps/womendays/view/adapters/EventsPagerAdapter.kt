@@ -2,19 +2,21 @@ package ru.spcm.apps.womendays.view.adapters
 
 import android.content.Context
 import android.support.v4.view.PagerAdapter
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.tools.DateHelper
-import ru.spcm.apps.womendays.view.components.CalendarGridView
+import ru.spcm.apps.womendays.view.components.SimplyMonthView
 import java.util.*
 import kotlin.collections.HashMap
 
-open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
+class EventsPagerAdapter(val context: Context) : PagerAdapter() {
 
-    private val inflater = LayoutInflater.from(context)
+    private val minDate = Calendar.getInstance()
+    private val maxDate = Calendar.getInstance()
+    private val currentDate = Calendar.getInstance()
+
+    private var count = 0
 
     private val events: HashMap<String, ArrayList<Event>> = HashMap()
 
@@ -32,25 +34,41 @@ open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
         notifyDataSetChanged()
     }
 
-    internal fun createView(container: ViewGroup, calendar: Calendar, month: Int?, size: Int): View {
-        val view: CalendarGridView = inflater.inflate(R.layout.layout_calendar_grid, container, false) as CalendarGridView
-
-        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        val monthBeginningCell = dayOfWeek + if ((dayOfWeek == calendar.firstDayOfWeek && month != null) || dayOfWeek == 1) 5 else -2
-        calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell)
-
-        val days = ArrayList<Date>()
-        while (days.size < size) {
-            days.add(calendar.time)
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
-        }
-
-        val adapter = CalendarDaysAdapter(context, R.layout.list_item_day, days, events, month)
-        view.adapter = adapter
-
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val view = SimplyMonthView(context)
+        view.setMonthParams(getMonthForPosition(position), getYearForPosition(position), Calendar.MONDAY)
         container.addView(view)
-
         return view
+    }
+
+    fun setRange(min: Calendar, max: Calendar) {
+        minDate.timeInMillis = min.timeInMillis
+        maxDate.timeInMillis = max.timeInMillis
+
+        val diffYear = maxDate.get(Calendar.YEAR) - minDate.get(Calendar.YEAR)
+        val diffMonth = maxDate.get(Calendar.MONTH) - minDate.get(Calendar.MONTH)
+
+        count = diffMonth + MONTHS_IN_YEAR * diffYear + 1
+
+    }
+
+    fun setDate(date: Calendar) {
+        currentDate.timeInMillis = date.timeInMillis
+    }
+
+    fun getPositionForDay(day: Calendar): Int {
+        val yearOffset = day.get(Calendar.YEAR) - minDate.get(Calendar.YEAR)
+        val monthOffset = day.get(Calendar.MONTH) - minDate.get(Calendar.MONTH)
+        return yearOffset * MONTHS_IN_YEAR + monthOffset
+    }
+
+    private fun getMonthForPosition(position: Int): Int {
+        return (position + minDate.get(Calendar.MONTH)) % MONTHS_IN_YEAR
+    }
+
+    private fun getYearForPosition(position: Int): Int {
+        val yearOffset = (position + minDate.get(Calendar.MONTH)) / MONTHS_IN_YEAR
+        return yearOffset + minDate.get(Calendar.YEAR)
     }
 
     override fun isViewFromObject(view: View, obj: Any): Boolean {
@@ -58,7 +76,7 @@ open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
     }
 
     override fun getCount(): Int {
-        return CALENDAR_SIZE
+        return count
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
@@ -70,6 +88,7 @@ open class EventsPagerAdapter(val context: Context) : PagerAdapter() {
     }
 
     companion object {
-        const val CALENDAR_SIZE = 2000
+        const val MONTHS_IN_YEAR = 12
     }
+
 }
