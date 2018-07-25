@@ -1,22 +1,20 @@
 package ru.spcm.apps.womendays.view.adapters
 
-import android.content.Context
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.tools.DateHelper
-import ru.spcm.apps.womendays.view.components.SimplyMonthView
 import java.util.*
 import kotlin.collections.HashMap
 
-class EventsPagerAdapter(val context: Context) : PagerAdapter() {
+abstract class EventsPagerAdapter() : PagerAdapter() {
 
-    private val minDate = Calendar.getInstance()
-    private val maxDate = Calendar.getInstance()
-    private val currentDate = Calendar.getInstance()
+    val minDate: Calendar = Calendar.getInstance()
+    val maxDate: Calendar = Calendar.getInstance()
+    val currentDate: Calendar = Calendar.getInstance()
 
-    private var count = 0
+    var size = 0
 
     private val events: HashMap<String, ArrayList<Event>> = HashMap()
 
@@ -34,49 +32,25 @@ class EventsPagerAdapter(val context: Context) : PagerAdapter() {
         notifyDataSetChanged()
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = SimplyMonthView(context)
-        view.setMonthParams(getMonthForPosition(position), getYearForPosition(position), Calendar.MONDAY)
-        container.addView(view)
-        return view
-    }
-
-    fun setRange(min: Calendar, max: Calendar) {
-        minDate.timeInMillis = min.timeInMillis
-        maxDate.timeInMillis = max.timeInMillis
-
-        val diffYear = maxDate.get(Calendar.YEAR) - minDate.get(Calendar.YEAR)
-        val diffMonth = maxDate.get(Calendar.MONTH) - minDate.get(Calendar.MONTH)
-
-        count = diffMonth + MONTHS_IN_YEAR * diffYear + 1
-
+    override fun getCount(): Int {
+        return size
     }
 
     fun setDate(date: Calendar) {
         currentDate.timeInMillis = date.timeInMillis
     }
 
-    fun getPositionForDay(day: Calendar): Int {
-        val yearOffset = day.get(Calendar.YEAR) - minDate.get(Calendar.YEAR)
-        val monthOffset = day.get(Calendar.MONTH) - minDate.get(Calendar.MONTH)
-        return yearOffset * MONTHS_IN_YEAR + monthOffset
-    }
-
-    private fun getMonthForPosition(position: Int): Int {
+    fun getMonthForPosition(position: Int): Int {
         return (position + minDate.get(Calendar.MONTH)) % MONTHS_IN_YEAR
     }
 
-    private fun getYearForPosition(position: Int): Int {
+    fun getYearForPosition(position: Int): Int {
         val yearOffset = (position + minDate.get(Calendar.MONTH)) / MONTHS_IN_YEAR
         return yearOffset + minDate.get(Calendar.YEAR)
     }
 
     override fun isViewFromObject(view: View, obj: Any): Boolean {
         return view == obj
-    }
-
-    override fun getCount(): Int {
-        return count
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
@@ -87,8 +61,13 @@ class EventsPagerAdapter(val context: Context) : PagerAdapter() {
         return PagerAdapter.POSITION_NONE
     }
 
+    abstract fun setRange(min: Calendar, max: Calendar)
+
+    abstract fun getPositionForDay(day: Calendar): Int
+
     companion object {
         const val MONTHS_IN_YEAR = 12
+        const val WEEK_SIZE = 7
     }
 
 }

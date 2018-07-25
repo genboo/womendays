@@ -8,10 +8,7 @@ import android.view.View
 import ru.spcm.apps.womendays.R
 import java.text.NumberFormat
 import java.util.*
-import android.text.format.DateFormat
 import android.view.MotionEvent
-import ru.spcm.apps.womendays.tools.Logger
-import java.text.SimpleDateFormat
 import android.animation.AnimatorSet
 import android.view.animation.AccelerateInterpolator
 import android.animation.ObjectAnimator
@@ -19,11 +16,9 @@ import android.view.animation.DecelerateInterpolator
 import android.util.Property
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.view.accessibility.AccessibilityNodeInfo
-import android.os.Bundle
 
 
-class SimplyMonthView(context: Context) : View(context) {
+class SimplyWeekView(context: Context) : View(context) {
 
     private var paddedWidth = 0
     private var paddedHeight = 0
@@ -44,15 +39,11 @@ class SimplyMonthView(context: Context) : View(context) {
     private var cellWidth: Int = 0
 
     private val calendar = Calendar.getInstance()
-    private var daysInMonth = 31
     private var weekStart = DEFAULT_WEEK_START
     private var dayOfWeekStart = 0
 
-    private var now = 0
+    private var now = -1
 
-    private var monthLabel = ""
-
-    private var monthLabelHeight: Float = 0f
     private var cellHeight: Float = 0f
 
     private val dayFormatter = NumberFormat.getIntegerInstance(Locale.getDefault())
@@ -68,21 +59,21 @@ class SimplyMonthView(context: Context) : View(context) {
     private var rippleAlpha = (255 * DEFAULT_RIPPLE_ALPHA).toInt()
 
     private var rippleAnimator = AnimatorSet()
-    private val radiusProperty = object : Property<SimplyMonthView, Float>(Float::class.java, "radius") {
-        override operator fun get(obj: SimplyMonthView): Float {
+    private val radiusProperty = object : Property<SimplyWeekView, Float>(Float::class.java, "radius") {
+        override operator fun get(obj: SimplyWeekView): Float {
             return obj.getRadius()
         }
 
-        override operator fun set(obj: SimplyMonthView, value: Float) {
+        override operator fun set(obj: SimplyWeekView, value: Float) {
             obj.setRadius(value)
         }
     }
-    private val circleAlphaProperty = object : Property<SimplyMonthView, Int>(Int::class.java, "rippleAlpha") {
-        override fun get(obj: SimplyMonthView): Int {
+    private val circleAlphaProperty = object : Property<SimplyWeekView, Int>(Int::class.java, "rippleAlpha") {
+        override fun get(obj: SimplyWeekView): Int {
             return obj.getRippleAlpha()
         }
 
-        override fun set(obj: SimplyMonthView, value: Int) {
+        override fun set(obj: SimplyWeekView, value: Int) {
             obj.setRippleAlpha(value)
         }
     }
@@ -92,7 +83,6 @@ class SimplyMonthView(context: Context) : View(context) {
         mainTextColor = ContextCompat.getColor(context, R.color.colorText)
         todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
 
-        monthLabelHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_height).toFloat()
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
         highlightRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_highlight_radius).toFloat()
         val padding = context.resources.getDimensionPixelSize(R.dimen.calendar_month_padding)
@@ -117,64 +107,55 @@ class SimplyMonthView(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        drawMonth(canvas)
         drawDaysOfWeek(canvas)
         drawDays(canvas)
-    }
-
-    private fun drawMonth(canvas: Canvas) {
-        canvas.drawText(monthLabel, width / 2f, paddingTop + monthLabelHeight / 2, monthPaint)
     }
 
     private fun drawDaysOfWeek(canvas: Canvas) {
         for (col in 0 until DAYS_IN_WEEK) {
             val label = dayOfWeekLabels[col]
             val colCenter = cellWidth * col + cellWidth / 2f
-            canvas.drawText(label, colCenter, paddingTop + monthLabelHeight + cellHeight / 2, dayPaint)
+            canvas.drawText(label, colCenter, paddingTop + cellHeight / 2, dayPaint)
         }
     }
 
     private fun drawDays(canvas: Canvas) {
         var col = findDayOffset()
-        var rowCenter = paddingTop + monthLabelHeight + cellHeight + cellHeight / 2
+        val rowCenter = paddingTop + cellHeight + cellHeight / 2
         val halfLineHeight = (dayPaint.ascent() + dayPaint.descent()) / 2f
-        for (day in 1..daysInMonth) {
+        val c = calendar.clone() as Calendar
+        for (day in 0 until DAYS_IN_WEEK) {
             val colCenter = cellWidth * col + cellWidth / 2f
-
-            if (day == highlightedDay) {
+            if (c.get(Calendar.DAY_OF_MONTH) == highlightedDay) {
                 canvas.drawCircle(colCenter, rowCenter, rippleRadius, highlightPaint)
             }
 
-            if (day == now) {
+            if (c.get(Calendar.DAY_OF_MONTH) == now) {
                 dayPaint.color = todayTextColor
             } else {
                 dayPaint.color = mainTextColor
             }
 
-            canvas.drawText(dayFormatter.format(day), colCenter, rowCenter - halfLineHeight, dayPaint)
-
+            canvas.drawText(dayFormatter.format(c.get(Calendar.DAY_OF_MONTH)), colCenter, rowCenter - halfLineHeight, dayPaint)
             col++
-            if (col == DAYS_IN_WEEK) {
-                col = 0
-                rowCenter += cellHeight
-            }
+            c.add(Calendar.DAY_OF_MONTH, 1)
         }
     }
 
-    fun setMonthParams(month: Int, year: Int, weekStart: Int) {
+    fun setWeekParams(month: Int, year: Int, daysOffset: Int, weekStart: Int) {
         calendar.set(year, month, 1)
-        daysInMonth = getDaysInMonth(month, year)
+        calendar.add(Calendar.DAY_OF_MONTH, daysOffset)
         dayOfWeekStart = calendar.get(Calendar.DAY_OF_WEEK)
         this.weekStart = weekStart
         val today = Calendar.getInstance()
-        for (day in 1..daysInMonth) {
-            if (sameDay(today, day)) {
-                now = day
+        val c =  calendar.clone() as Calendar
+        for (day in  0 until DAYS_IN_WEEK) {
+            if (sameDay(today, c.get(Calendar.DAY_OF_MONTH))) {
+                now = c.get(Calendar.DAY_OF_MONTH)
                 break
             }
+            c.add(Calendar.DAY_OF_MONTH, 1)
         }
-
-        updateMonthYearLabel()
     }
 
     private fun sameDay(today: Calendar, day: Int): Boolean {
@@ -183,14 +164,6 @@ class SimplyMonthView(context: Context) : View(context) {
                 && day == today.get(Calendar.DAY_OF_MONTH)
     }
 
-    private fun getDaysInMonth(month: Int, year: Int): Int =
-            when (month) {
-                Calendar.JANUARY, Calendar.MARCH, Calendar.MAY, Calendar.JULY, Calendar.AUGUST, Calendar.OCTOBER, Calendar.DECEMBER -> 31
-                Calendar.APRIL, Calendar.JUNE, Calendar.SEPTEMBER, Calendar.NOVEMBER -> 30
-                Calendar.FEBRUARY -> if (year % 4 == 0) 29 else 28
-                else -> throw IllegalArgumentException("Invalid Month")
-            }
-
     private fun findDayOffset(): Int {
         val offset = dayOfWeekStart - weekStart
         return if (dayOfWeekStart < weekStart) {
@@ -198,13 +171,6 @@ class SimplyMonthView(context: Context) : View(context) {
         } else {
             offset
         }
-    }
-
-    private fun updateMonthYearLabel() {
-        val format = DateFormat.getBestDateTimePattern(Locale.getDefault(), MONTH_YEAR_FORMAT)
-        val formatter = SimpleDateFormat(format, Locale.getDefault())
-
-        monthLabel = formatter.format(calendar.time).capitalize()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -246,21 +212,15 @@ class SimplyMonthView(context: Context) : View(context) {
         if (paddedX < 0 || paddedX >= paddedWidth) {
             return -1
         }
-        val headerHeight = monthLabelHeight + cellHeight
+        val headerHeight = cellHeight
         val paddedY = y - paddingTop
         if (paddedY < headerHeight || paddedY >= paddedHeight) {
             return -1
         }
-
-        val row = (paddedY - headerHeight.toInt()) / cellHeight.toInt()
         val col = paddedX * DAYS_IN_WEEK / paddedWidth
-        val index = col + row * DAYS_IN_WEEK
-        val day = index + 1 - findDayOffset()
-        return if (!isValidDayOfMonth(day)) {
-            -1
-        } else {
-            day
-        }
+        val c  = calendar.clone() as Calendar
+        c.add(Calendar.DAY_OF_MONTH, col)
+        return c.get(Calendar.DAY_OF_MONTH)
     }
 
     private fun createAnimation() {
@@ -273,11 +233,11 @@ class SimplyMonthView(context: Context) : View(context) {
                 highlightedDay = -1
             }
         })
-        val ripple = ObjectAnimator.ofFloat<SimplyMonthView>(this, radiusProperty, 0f, highlightRadius)
+        val ripple = ObjectAnimator.ofFloat<SimplyWeekView>(this, radiusProperty, 0f, highlightRadius)
         ripple.duration = DEFAULT_HIGHLIGHT_SPEED
         ripple.interpolator = DecelerateInterpolator()
 
-        val fade = ObjectAnimator.ofInt<SimplyMonthView>(this, circleAlphaProperty, rippleAlpha, 0)
+        val fade = ObjectAnimator.ofInt<SimplyWeekView>(this, circleAlphaProperty, rippleAlpha, 0)
         fade.duration = DEFAULT_HIGHLIGHT_SPEED
         fade.interpolator = AccelerateInterpolator()
         fade.startDelay = DEFAULT_HIGHLIGHT_SPEED / 2
@@ -292,14 +252,8 @@ class SimplyMonthView(context: Context) : View(context) {
         rippleAnimator.removeAllListeners()
     }
 
-    private fun isValidDayOfMonth(day: Int): Boolean {
-        return day in 1..daysInMonth
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val preferredHeight = (cellHeight * MAX_WEEKS_IN_MONTH
-                + cellHeight + monthLabelHeight
-                + paddingTop + paddingBottom)
+        val preferredHeight = (cellHeight + cellHeight + paddingTop + paddingBottom)
         val preferredWidth = (cellWidth * DAYS_IN_WEEK + paddingStart + paddingEnd)
         val resolvedWidth = resolveSize(preferredWidth, widthMeasureSpec)
         val resolvedHeight = resolveSize(preferredHeight.toInt(), heightMeasureSpec)
@@ -338,9 +292,7 @@ class SimplyMonthView(context: Context) : View(context) {
 
     companion object {
         const val DAYS_IN_WEEK = 7
-        const val MAX_WEEKS_IN_MONTH = 6
         const val DEFAULT_WEEK_START = Calendar.SUNDAY
-        const val MONTH_YEAR_FORMAT = "MMMMy"
         const val DEFAULT_HIGHLIGHT_SPEED = 150L
         const val DEFAULT_RIPPLE_ALPHA = 0.2f
     }

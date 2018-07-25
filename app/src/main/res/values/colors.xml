@@ -9,4 +9,5 @@
     <color name="colorText">#333</color>
 
     <color name="colorShadowDark">#99000000</color>
+    <color name="colorShadow">#33000000</color>
 </resources>

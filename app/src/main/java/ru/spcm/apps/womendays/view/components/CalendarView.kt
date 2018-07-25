@@ -7,6 +7,8 @@ import android.widget.FrameLayout
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
+import ru.spcm.apps.womendays.view.adapters.MonthPagerAdapter
+import ru.spcm.apps.womendays.view.adapters.WeekPagerAdapter
 import java.util.*
 
 class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : FrameLayout(context, attrs, defStyle) {
@@ -28,8 +30,6 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         LayoutInflater.from(context).inflate(R.layout.layout_calendar, this)
         calendarPager = findViewById(R.id.calendarViewPager)
 
-        val adapter = EventsPagerAdapter(context)
-
         val minDate = Calendar.getInstance()
         minDate.set(DEFAULT_START_YEAR, Calendar.JANUARY, 1)
 
@@ -37,6 +37,12 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         maxDate.set(DEFAULT_END_YEAR, Calendar.DECEMBER, 21)
 
         val currentDate = Calendar.getInstance()
+
+        val adapter: EventsPagerAdapter = when (type) {
+            CALENDAR_TYPE_WEEK -> WeekPagerAdapter(context)
+            else -> MonthPagerAdapter(context)
+        }
+
         adapter.setRange(minDate, maxDate)
         adapter.setDate(currentDate)
 
