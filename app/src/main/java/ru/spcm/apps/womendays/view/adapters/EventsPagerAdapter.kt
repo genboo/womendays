@@ -12,13 +12,12 @@ abstract class EventsPagerAdapter() : PagerAdapter() {
 
     val minDate: Calendar = Calendar.getInstance()
     val maxDate: Calendar = Calendar.getInstance()
-    val currentDate: Calendar = Calendar.getInstance()
+    val events: HashMap<String, ArrayList<Event>> = HashMap()
 
     var size = 0
 
-    private val events: HashMap<String, ArrayList<Event>> = HashMap()
-
     fun setEvents(event: List<Event>) {
+        events.clear()
         event.forEach {
             val date = DateHelper.formatYearMonthDay(it.date)
             if (events.containsKey(date)) {
@@ -34,10 +33,6 @@ abstract class EventsPagerAdapter() : PagerAdapter() {
 
     override fun getCount(): Int {
         return size
-    }
-
-    fun setDate(date: Calendar) {
-        currentDate.timeInMillis = date.timeInMillis
     }
 
     fun getMonthForPosition(position: Int): Int {

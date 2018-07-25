@@ -44,8 +44,7 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         }
 
         adapter.setRange(minDate, maxDate)
-        adapter.setDate(currentDate)
-
+        
         calendarPager.adapter = adapter
         calendarPager.currentItem = adapter.getPositionForDay(currentDate)
 
