@@ -27,7 +27,7 @@ class SimplyWeekView(context: Context) : CalendarPageView(context) {
         val halfLineHeight = (dayPaint.ascent() + dayPaint.descent()) / 2f
         val c = calendar.clone() as Calendar
         for (day in 0 until DAYS_IN_WEEK) {
-            val colCenter = cellWidth * col + cellWidth / 2f
+            val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
             if (c.get(Calendar.DAY_OF_MONTH) == highlightedDay) {
                 canvas.drawCircle(colCenter, rowCenter, rippleRadius, highlightPaint)
             }

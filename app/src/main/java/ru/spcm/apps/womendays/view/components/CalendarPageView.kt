@@ -8,7 +8,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.support.v4.content.ContextCompat
-import android.util.Property
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -62,27 +61,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
     internal var rippleRadius = 0f
     internal var rippleAlpha = (255 * DEFAULT_RIPPLE_ALPHA).toInt()
 
-
-
     private var rippleAnimator = AnimatorSet()
-    private val radiusProperty = object : Property<CalendarPageView, Float>(Float::class.java, "radius") {
-        override operator fun get(obj: CalendarPageView): Float {
-            return obj.getRadius()
-        }
-
-        override operator fun set(obj: CalendarPageView, value: Float) {
-            obj.setRadius(value)
-        }
-    }
-    private val circleAlphaProperty = object : Property<CalendarPageView, Int>(Int::class.java, "rippleAlpha") {
-        override fun get(obj: CalendarPageView): Int {
-            return obj.getRippleAlpha()
-        }
-
-        override fun set(obj: CalendarPageView, value: Int) {
-            obj.setRippleAlpha(value)
-        }
-    }
+    private val radiusProperty = RadiusProperty()
+    private val circleAlphaProperty = RippleAlphaProperty()
 
     init {
         mainTextColor = ContextCompat.getColor(context, R.color.colorText)
@@ -91,7 +72,6 @@ abstract class CalendarPageView(context: Context) : View(context) {
         monthLabelHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_height).toFloat()
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
         highlightRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_highlight_radius).toFloat()
-
 
         monthPaint.color = mainTextColor
         monthPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_size).toFloat()
@@ -104,6 +84,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         dayPaint.isAntiAlias = true
 
         highlightPaint.color = ContextCompat.getColor(context, R.color.colorShadow)
+        highlightPaint.alpha = rippleAlpha
         highlightPaint.isAntiAlias = true
 
         if (isInEditMode) {
@@ -114,7 +95,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
     internal fun drawDaysOfWeek(canvas: Canvas) {
         for (col in 0 until DAYS_IN_WEEK) {
             val label = dayOfWeekLabels[col]
-            val colCenter = cellWidth * col + cellWidth / 2f
+            val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
             canvas.drawText(label, colCenter, paddingTop + monthLabelHeight + cellHeight / 2, dayPaint)
         }
     }
@@ -185,10 +166,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
         ripple.interpolator = DecelerateInterpolator()
 
         val fade = ObjectAnimator.ofInt<CalendarPageView>(this, circleAlphaProperty, rippleAlpha, 0)
-        fade.duration = DEFAULT_HIGHLIGHT_SPEED
+        fade.duration = DEFAULT_HIGHLIGHT_SPEED / 2
         fade.interpolator = AccelerateInterpolator()
         fade.startDelay = DEFAULT_HIGHLIGHT_SPEED / 2
-
 
         rippleAnimator.playTogether(ripple, fade)
         rippleAnimator.start()
@@ -213,14 +193,14 @@ abstract class CalendarPageView(context: Context) : View(context) {
         val w = right - left
         val h = bottom - top
 
-        cellWidth = w / DAYS_IN_WEEK
-
         paddedWidth = w - paddingEnd - paddingStart
         paddedHeight = h - paddingBottom - paddingTop
+
+        cellWidth = paddedWidth / DAYS_IN_WEEK
     }
 
 
-    private fun getRadius(): Float {
+    fun getRadius(): Float {
         return rippleRadius
     }
 
@@ -244,7 +224,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         const val MAX_WEEKS_IN_MONTH = 6
         const val DEFAULT_WEEK_START = Calendar.SUNDAY
         const val MONTH_YEAR_FORMAT = "MMMMy"
-        const val DEFAULT_HIGHLIGHT_SPEED = 150L
-        const val DEFAULT_RIPPLE_ALPHA = 0.2f
+        const val DEFAULT_HIGHLIGHT_SPEED = 200L
+        const val DEFAULT_RIPPLE_ALPHA = 0.1f
     }
 }

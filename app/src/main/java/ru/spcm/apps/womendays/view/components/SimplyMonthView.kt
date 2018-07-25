@@ -29,7 +29,7 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         var rowCenter = paddingTop + monthLabelHeight + cellHeight + cellHeight / 2
         val halfLineHeight = (dayPaint.ascent() + dayPaint.descent()) / 2f
         for (day in 1..daysInMonth) {
-            val colCenter = cellWidth * col + cellWidth / 2f
+            val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
             if (day == highlightedDay) {
                 canvas.drawCircle(colCenter, rowCenter, rippleRadius, highlightPaint)
             }
@@ -82,7 +82,7 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
     }
 
     override fun getDayAtLocation(x: Int, y: Int): Int {
-        val paddedX = x - paddingLeft
+        val paddedX = x - paddingStart
         if (paddedX < 0 || paddedX >= paddedWidth) {
             return -1
         }
