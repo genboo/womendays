@@ -62,6 +62,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
     internal var rippleRadius = 0f
     internal var rippleAlpha = (255 * DEFAULT_RIPPLE_ALPHA).toInt()
 
+
+
     private var rippleAnimator = AnimatorSet()
     private val radiusProperty = object : Property<CalendarPageView, Float>(Float::class.java, "radius") {
         override operator fun get(obj: CalendarPageView): Float {
@@ -137,7 +139,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         val y = (event.y + 0.5f).toInt()
         val action = event.action
         when (action) {
-            MotionEvent.ACTION_DOWN -> {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 val touchedItem = getDayAtLocation(x, y)
                 if (action == MotionEvent.ACTION_DOWN && touchedItem < 0) {
                     // Touch something that's not an item, reject event.

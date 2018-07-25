@@ -30,7 +30,6 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         val halfLineHeight = (dayPaint.ascent() + dayPaint.descent()) / 2f
         for (day in 1..daysInMonth) {
             val colCenter = cellWidth * col + cellWidth / 2f
-
             if (day == highlightedDay) {
                 canvas.drawCircle(colCenter, rowCenter, rippleRadius, highlightPaint)
             }

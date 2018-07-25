@@ -16,12 +16,13 @@ data class Event(@PrimaryKey(autoGenerate = true) var id: Long) {
 
     var date: Date = Date()
 
-    var type: Type = Type.SEX
+    var type: Type = Type.SEX_SAFE
 
     var message = ""
 
     enum class Type {
-        SEX,
+        SEX_SAFE,
+        SEX_UNSAFE,
         MONTHLY
     }
 

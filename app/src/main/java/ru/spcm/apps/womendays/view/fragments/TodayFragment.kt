@@ -36,7 +36,7 @@ class TodayFragment : BaseFragment() {
         dayWidget.setDaysLeftCount(10)
 
         getFab().setOnClickListener {
-            viewModel.save(Event.Type.SEX).observe(this, Observer { id ->
+            viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
                 showSnack(R.string.action_added, View.OnClickListener {
                     viewModel.delete(id)
                     showSnack(R.string.action_canceled, null)

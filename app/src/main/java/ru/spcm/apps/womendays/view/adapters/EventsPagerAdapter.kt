@@ -8,11 +8,11 @@ import ru.spcm.apps.womendays.tools.DateHelper
 import java.util.*
 import kotlin.collections.HashMap
 
-abstract class EventsPagerAdapter() : PagerAdapter() {
+abstract class EventsPagerAdapter : PagerAdapter() {
 
     val minDate: Calendar = Calendar.getInstance()
     val maxDate: Calendar = Calendar.getInstance()
-    val events: HashMap<String, ArrayList<Event>> = HashMap()
+    val events: HashMap<String, Int> = HashMap()
 
     var size = 0
 
@@ -20,13 +20,12 @@ abstract class EventsPagerAdapter() : PagerAdapter() {
         events.clear()
         event.forEach {
             val date = DateHelper.formatYearMonthDay(it.date)
-            if (events.containsKey(date)) {
-                (events[date] as ArrayList<Event>).add(it)
-            } else {
-                val list = ArrayList<Event>()
-                list.add(it)
-                events[date] = list
+            var flag = if (events.containsKey(date)) {
+                events[date]
+            }else{
+                0
             }
+
         }
         notifyDataSetChanged()
     }
@@ -63,6 +62,10 @@ abstract class EventsPagerAdapter() : PagerAdapter() {
     companion object {
         const val MONTHS_IN_YEAR = 12
         const val WEEK_SIZE = 7
+
+        const val FLAG_SEX_SAFE = 1
+        const val FLAG_SEX_UNSAFE = 2
+        const val FLAG_SEX_MONTHLY = 3
     }
 
 }
