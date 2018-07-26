@@ -24,6 +24,8 @@ import kotlin.collections.HashMap
 abstract class CalendarPageView(context: Context) : View(context) {
     internal var paddedWidth = 0
     internal var paddedHeight = 0
+    private val shiftIcon: Int
+    private val shiftMonthly: Int
 
     internal val monthPaint = Paint()
     internal val dayPaint = Paint()
@@ -78,6 +80,10 @@ abstract class CalendarPageView(context: Context) : View(context) {
         todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
 
         monthLabelHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_height).toFloat()
+        val iconSize = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_size)
+        shiftIcon = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_shift)
+        shiftMonthly = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_shift)
+
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
         highlightRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_highlight_radius).toFloat()
 
@@ -97,11 +103,12 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
         monthlyPain.color = ContextCompat.getColor(context, R.color.colorMonthly)
         monthlyPain.isAntiAlias = true
+        monthlyPain.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_width).toFloat()
 
         val drawable = ContextCompat.getDrawable(context, R.drawable.ic_heart)
 
         if (drawable != null) {
-            heartBitmap = Bitmap.createBitmap(12, 12, Bitmap.Config.ARGB_8888)
+            heartBitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(heartBitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
@@ -132,15 +139,16 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
         val date = DateHelper.formatYearMonthDay(c.time)
         val flag: Int = events[date] ?: 0
-        val shift = 20
-        if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
-            canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - shift * 2, monthlyPain)
-        }
-        if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
-            canvas.drawCircle(x + shift, y + shift, 6f, monthlyPain)
-        }
-        if (flag and EventsPagerAdapter.FLAG_SEX_MONTHLY > 0) {
-            canvas.drawLine(x - cellWidth / 2, y + shift, x + cellWidth / 2, y + shift, monthlyPain)
+        if(flag != 0) {
+            if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
+                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPain)
+            }
+            if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
+                canvas.drawCircle(x + shiftIcon, y + shiftIcon, 6f, monthlyPain)
+            }
+            if (flag and EventsPagerAdapter.FLAG_SEX_MONTHLY > 0) {
+                canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyPain)
+            }
         }
 
     }

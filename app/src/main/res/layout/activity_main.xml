@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".view.activities.MainActivity"
-    tools:openDrawer="start">
+    tools:context=".view.activities.MainActivity">
 
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?android:attr/actionBarSize" />
+        android:layout_marginBottom="?android:attr/actionBarSize"
+        tools:background="@color/colorLight" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomMenu"

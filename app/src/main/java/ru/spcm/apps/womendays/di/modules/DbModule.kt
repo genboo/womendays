@@ -10,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import ru.spcm.apps.womendays.model.db.Database
 import ru.spcm.apps.womendays.model.db.dao.EventsDao
+import ru.spcm.apps.womendays.model.db.dao.SettingsDao
 
 /**
  * Инициализация базы данных
@@ -40,6 +41,11 @@ class DbModule {
         return db.eventsDao()
     }
 
+    @Provides
+    @Singleton
+    internal fun provideSettingsDao(db: Database): SettingsDao {
+        return db.settingsDao()
+    }
 
     companion object {
         const val DB_NAME = "womendays.db"

@@ -28,8 +28,8 @@ abstract class BaseFragment : Fragment() {
 
     val navigator: Navigator by lazy { (activity as MainActivity).navigator }
 
-    protected fun <T : ViewModel> getViewModel(owner: Fragment, t: Class<T>): T {
-        return ViewModelProviders.of(owner, viewModelFactory).get(t)
+    protected fun <T : ViewModel> getViewModel(owner: Fragment, viewModelClass: Class<T>): T {
+        return ViewModelProviders.of(owner, viewModelFactory).get(viewModelClass)
     }
 
     protected fun updateToolbar() {
@@ -61,11 +61,13 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected fun showSnack(text: Int, action: View.OnClickListener?) {
-        val snackBar = Snackbar.make((activity as MainActivity).getView(), text, Snackbar.LENGTH_LONG)
-        if (action != null) {
-            snackBar.setAction(ru.spcm.apps.womendays.R.string.action_cancel, action)
+        if (activity != null) {
+            val snackBar = Snackbar.make((activity as MainActivity).getView(), text, Snackbar.LENGTH_LONG)
+            if (action != null) {
+                snackBar.setAction(ru.spcm.apps.womendays.R.string.action_cancel, action)
+            }
+            snackBar.show()
         }
-        snackBar.show()
     }
 
     open fun updateTitle(title: String) {

@@ -1,4 +1,4 @@
-package ru.spcm.apps.womendays.repositiries
+package ru.spcm.apps.womendays.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData

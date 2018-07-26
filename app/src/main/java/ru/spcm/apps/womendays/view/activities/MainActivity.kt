@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        window.setBackgroundDrawableResource(R.drawable.transparent)
         if (component == null) {
             component = (application as App).appComponent
             component?.inject(this)

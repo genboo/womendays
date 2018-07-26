@@ -6,6 +6,7 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.view.activities.MainActivity
 import ru.spcm.apps.womendays.view.components.slideIn
 import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
@@ -39,7 +40,6 @@ class TodayFragment : BaseFragment() {
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
                 showSnack(R.string.action_added, View.OnClickListener {
                     viewModel.delete(id)
-                    showSnack(R.string.action_canceled, null)
                 })
             })
         }

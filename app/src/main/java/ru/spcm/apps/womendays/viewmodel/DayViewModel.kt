@@ -6,7 +6,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
-import ru.spcm.apps.womendays.repositiries.EventsRepo
+import ru.spcm.apps.womendays.repositories.EventsRepo
 import ru.spcm.apps.womendays.tools.AbsentLiveData
 import javax.inject.Inject
 
