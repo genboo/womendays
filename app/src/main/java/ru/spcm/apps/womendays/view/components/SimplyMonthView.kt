@@ -28,25 +28,18 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         var col = findDayOffset()
         var rowCenter = paddingTop + monthLabelHeight + cellHeight + cellHeight / 2
         val halfLineHeight = (dayPaint.ascent() + dayPaint.descent()) / 2f
+        val c = calendar.clone() as Calendar
         for (day in 1..daysInMonth) {
             val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
-            if (day == highlightedDay) {
-                canvas.drawCircle(colCenter, rowCenter, rippleRadius, highlightPaint)
-            }
 
-            if (day == now) {
-                dayPaint.color = todayTextColor
-            } else {
-                dayPaint.color = mainTextColor
-            }
-
-            canvas.drawText(dayFormatter.format(day), colCenter, rowCenter - halfLineHeight, dayPaint)
+            drawDayWithEvents(canvas, c, colCenter, rowCenter - halfLineHeight, halfLineHeight, dayPaint)
 
             col++
             if (col == DAYS_IN_WEEK) {
                 col = 0
                 rowCenter += cellHeight
             }
+            c.add(Calendar.DAY_OF_MONTH, 1)
         }
     }
 

@@ -10,6 +10,7 @@ class WeekPagerAdapter(val context: Context) : EventsPagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = SimplyWeekView(context)
         view.setWeekParams(minDate.get(Calendar.MONTH), minDate.get(Calendar.YEAR), position * WEEK_SIZE, Calendar.MONDAY)
+        view.setEvents(events)
         container.addView(view)
         return view
     }

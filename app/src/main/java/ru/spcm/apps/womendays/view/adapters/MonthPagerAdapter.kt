@@ -10,6 +10,7 @@ class MonthPagerAdapter(val context: Context) : EventsPagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = SimplyMonthView(context)
         view.setMonthParams(getMonthForPosition(position), getYearForPosition(position), Calendar.MONDAY)
+        view.setEvents(events)
         container.addView(view)
         return view
     }

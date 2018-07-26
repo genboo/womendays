@@ -5,6 +5,8 @@
     <color name="colorAccent">#33b5e5</color>
     <color name="colorLight">#E1F5FE</color>
 
+    <color name="colorMonthly">#ff0000</color>
+
     <color name="colorHint">#cecece</color>
     <color name="colorText">#333</color>
 

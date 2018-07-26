@@ -20,12 +20,14 @@ abstract class EventsPagerAdapter : PagerAdapter() {
         events.clear()
         event.forEach {
             val date = DateHelper.formatYearMonthDay(it.date)
-            var flag = if (events.containsKey(date)) {
-                events[date]
-            }else{
-                0
-            }
+            var flag: Int = events[date] ?: 0
 
+            flag = when (it.type) {
+                Event.Type.SEX_SAFE -> flag or FLAG_SEX_SAFE
+                Event.Type.SEX_UNSAFE -> flag or FLAG_SEX_UNSAFE
+                Event.Type.MONTHLY -> flag or FLAG_SEX_MONTHLY
+            }
+            events[date] = flag
         }
         notifyDataSetChanged()
     }
@@ -63,9 +65,9 @@ abstract class EventsPagerAdapter : PagerAdapter() {
         const val MONTHS_IN_YEAR = 12
         const val WEEK_SIZE = 7
 
-        const val FLAG_SEX_SAFE = 1
-        const val FLAG_SEX_UNSAFE = 2
-        const val FLAG_SEX_MONTHLY = 3
+        const val FLAG_SEX_SAFE = 0x00000001
+        const val FLAG_SEX_UNSAFE = 0x00000010
+        const val FLAG_SEX_MONTHLY = 0x00000100
     }
 
 }

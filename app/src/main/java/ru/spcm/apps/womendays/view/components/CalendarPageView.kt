@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.support.v4.content.ContextCompat
@@ -13,9 +14,12 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.tools.DateHelper
 import ru.spcm.apps.womendays.tools.Logger
+import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import java.text.NumberFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 abstract class CalendarPageView(context: Context) : View(context) {
     internal var paddedWidth = 0
@@ -23,7 +27,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     internal val monthPaint = Paint()
     internal val dayPaint = Paint()
-    internal val highlightPaint = Paint()
+    private val highlightPaint = Paint()
+    private val monthlyPain = Paint()
     private val dayOfWeekLabels = arrayOf(
             context.getString(R.string.calendar_monday),
             context.getString(R.string.calendar_tuesday),
@@ -49,21 +54,24 @@ abstract class CalendarPageView(context: Context) : View(context) {
     internal var monthLabelHeight: Float = 0f
     internal var cellHeight: Float = 0f
 
-    internal val dayFormatter = NumberFormat.getIntegerInstance(Locale.getDefault())
+    private val dayFormatter = NumberFormat.getIntegerInstance(Locale.getDefault())
 
-    internal var mainTextColor: Int = 0
-    internal var todayTextColor: Int = 0
+    private var mainTextColor: Int = 0
+    private var todayTextColor: Int = 0
 
     internal var highlightedDay = -1
     private var previouslyHighlightedDay = -1
     private var highlightRadius = 16f
 
-    internal var rippleRadius = 0f
+    private var rippleRadius = 0f
     internal var rippleAlpha = (255 * DEFAULT_RIPPLE_ALPHA).toInt()
 
     private var rippleAnimator = AnimatorSet()
     private val radiusProperty = RadiusProperty()
     private val circleAlphaProperty = RippleAlphaProperty()
+
+    private var events: HashMap<String, Int> = HashMap()
+    private val heartBitmap: Bitmap
 
     init {
         mainTextColor = ContextCompat.getColor(context, R.color.colorText)
@@ -87,11 +95,60 @@ abstract class CalendarPageView(context: Context) : View(context) {
         highlightPaint.alpha = rippleAlpha
         highlightPaint.isAntiAlias = true
 
-        if (isInEditMode) {
-            highlightedDay = 1
+        monthlyPain.color = ContextCompat.getColor(context, R.color.colorMonthly)
+        monthlyPain.isAntiAlias = true
+
+        val drawable = ContextCompat.getDrawable(context, R.drawable.ic_heart)
+
+        if (drawable != null) {
+            heartBitmap = Bitmap.createBitmap(12, 12, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(heartBitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
+            drawable.draw(canvas)
+        } else {
+            heartBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         }
+
     }
 
+    /**
+     * Draw one day with highlight and events
+     */
+    fun drawDayWithEvents(canvas: Canvas, c: Calendar, x: Float, y: Float, halfLineHeight: Float, paint: Paint) {
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        if (day == highlightedDay) {
+            canvas.drawCircle(x, y + halfLineHeight, rippleRadius, highlightPaint)
+        }
+
+        if (day == now) {
+            dayPaint.color = todayTextColor
+        } else {
+            dayPaint.color = mainTextColor
+        }
+
+        canvas.drawText(dayFormatter.format(day), x, y, paint)
+
+        val date = DateHelper.formatYearMonthDay(c.time)
+        val flag: Int = events[date] ?: 0
+        val shift = 20
+        if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
+            canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - shift * 2, monthlyPain)
+        }
+        if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
+            canvas.drawCircle(x + shift, y + shift, 6f, monthlyPain)
+        }
+        if (flag and EventsPagerAdapter.FLAG_SEX_MONTHLY > 0) {
+            canvas.drawLine(x - cellWidth / 2, y + shift, x + cellWidth / 2, y + shift, monthlyPain)
+        }
+
+    }
+
+    /**
+     * Draw line with days of week like
+     * mon tue wed thu fri sat sun
+     */
     internal fun drawDaysOfWeek(canvas: Canvas) {
         for (col in 0 until DAYS_IN_WEEK) {
             val label = dayOfWeekLabels[col]
@@ -217,6 +274,10 @@ abstract class CalendarPageView(context: Context) : View(context) {
     fun setRippleAlpha(rippleAlpha: Int) {
         highlightPaint.alpha = rippleAlpha
         invalidate()
+    }
+
+    fun setEvents(events: HashMap<String, Int>) {
+        this.events = events
     }
 
     companion object {
