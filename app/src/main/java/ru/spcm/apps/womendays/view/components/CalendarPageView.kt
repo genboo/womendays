@@ -30,7 +30,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
     internal val monthPaint = Paint()
     internal val dayPaint = Paint()
     private val highlightPaint = Paint()
-    private val monthlyPain = Paint()
+    private val monthlyPaint = Paint()
+    private val ovulationPaint = Paint()
     private val dayOfWeekLabels = arrayOf(
             context.getString(R.string.calendar_monday),
             context.getString(R.string.calendar_tuesday),
@@ -75,6 +76,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
     private var events: HashMap<String, Int> = HashMap()
     private val heartBitmap: Bitmap
 
+    private var ovulationRadius = 16f
+
     init {
         mainTextColor = ContextCompat.getColor(context, R.color.colorText)
         todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
@@ -83,6 +86,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         val iconSize = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_size)
         shiftIcon = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_shift)
         shiftMonthly = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_shift)
+        ovulationRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_ovulation_radius).toFloat()
 
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
         highlightRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_highlight_radius).toFloat()
@@ -101,9 +105,14 @@ abstract class CalendarPageView(context: Context) : View(context) {
         highlightPaint.alpha = rippleAlpha
         highlightPaint.isAntiAlias = true
 
-        monthlyPain.color = ContextCompat.getColor(context, R.color.colorMonthly)
-        monthlyPain.isAntiAlias = true
-        monthlyPain.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_width).toFloat()
+        monthlyPaint.color = ContextCompat.getColor(context, R.color.colorMonthly)
+        monthlyPaint.isAntiAlias = true
+        monthlyPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_width).toFloat()
+
+        ovulationPaint.color = ContextCompat.getColor(context, R.color.colorOvulation)
+        ovulationPaint.isAntiAlias = true
+        ovulationPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_ovulation_width).toFloat()
+        ovulationPaint.style = Paint.Style.STROKE
 
         val drawable = ContextCompat.getDrawable(context, R.drawable.ic_heart)
 
@@ -141,13 +150,17 @@ abstract class CalendarPageView(context: Context) : View(context) {
         val flag: Int = events[date] ?: 0
         if(flag != 0) {
             if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
-                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPain)
+                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
             }
             if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
-                canvas.drawCircle(x + shiftIcon, y + shiftIcon, 6f, monthlyPain)
+                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
+                canvas.drawCircle(x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, 6f, monthlyPaint)
             }
-            if (flag and EventsPagerAdapter.FLAG_SEX_MONTHLY > 0) {
-                canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyPain)
+            if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0) {
+                canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyPaint)
+            }
+            if (flag and EventsPagerAdapter.FLAG_OVULATION > 0) {
+                canvas.drawCircle(x, y + halfLineHeight, ovulationRadius, ovulationPaint)
             }
         }
 

@@ -19,14 +19,14 @@ class DayViewModel @Inject
 internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
     private val eventsSwitcher = MutableLiveData<Boolean>()
-    val events: LiveData<List<Event>>
+    val events: LiveData<HashMap<String, Int>>
 
     init {
         events = Transformations.switchMap(eventsSwitcher) {
             if (it) {
                 return@switchMap eventsRepo.getEvents()
             }
-            return@switchMap AbsentLiveData.create<List<Event>>()
+            return@switchMap AbsentLiveData.create<HashMap<String, Int>>()
         }
     }
 

@@ -7,6 +7,8 @@
     <dimen name="calendar_icon_shift">1dp</dimen>
     <dimen name="calendar_monthly_shift">8dp</dimen>
     <dimen name="calendar_monthly_width">1dp</dimen>
+    <dimen name="calendar_ovulation_width">1dp</dimen>
+    <dimen name="calendar_ovulation_radius">12dp</dimen>
     <dimen name="calendar_cell_height">38dp</dimen>
     <dimen name="calendar_month_padding">16dp</dimen>
     <dimen name="calendar_highlight_radius">24dp</dimen>

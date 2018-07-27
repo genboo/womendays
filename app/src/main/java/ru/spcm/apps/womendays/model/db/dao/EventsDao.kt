@@ -18,5 +18,8 @@ interface EventsDao {
     fun delete(item: Event)
 
     @Query("SELECT * FROM Event")
-    fun getEvents(): LiveData<List<Event>>
+    fun getEvents(): List<Event>
+
+    @Query("SELECT * FROM Event WHERE type = 'MONTHLY' ORDER BY date DESC LIMIT 1")
+    fun getLastMonthly(): Event?
 }

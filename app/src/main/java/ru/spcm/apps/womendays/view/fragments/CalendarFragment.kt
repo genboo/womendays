@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
-import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
@@ -32,7 +31,7 @@ class CalendarFragment : BaseFragment() {
         calendarView.postDelayed({ viewModel.loadEvents() }, 200)
     }
 
-    private fun observeEvents(data: List<Event>?) {
+    private fun observeEvents(data: HashMap<String, Int>?) {
         if (data != null) {
             calendarView.setEvents(data)
         }

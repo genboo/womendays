@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import ru.spcm.apps.womendays.R
-import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.MonthPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.WeekPagerAdapter
@@ -44,14 +43,14 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         }
 
         adapter.setRange(minDate, maxDate)
-        
+
         calendarPager.adapter = adapter
         calendarPager.currentItem = adapter.getPositionForDay(currentDate)
 
     }
 
-    fun setEvents(events: List<Event>) {
-        (calendarPager.adapter as EventsPagerAdapter).setEvents(events)
+    fun setEvents(events: HashMap<String, Int>) {
+        (calendarPager.adapter as EventsPagerAdapter).setEventsList(events)
     }
 
     companion object {

@@ -6,7 +6,6 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
-import ru.spcm.apps.womendays.view.activities.MainActivity
 import ru.spcm.apps.womendays.view.components.slideIn
 import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
@@ -45,7 +44,7 @@ class TodayFragment : BaseFragment() {
         }
     }
 
-    private fun observeEvents(data: List<Event>?) {
+    private fun observeEvents(data: HashMap<String, Int>?) {
         if (data != null) {
             calendarView.setEvents(data)
         }
