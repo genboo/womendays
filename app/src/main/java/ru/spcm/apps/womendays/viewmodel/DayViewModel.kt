@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.repositories.EventsRepo
 import ru.spcm.apps.womendays.tools.AbsentLiveData
 import javax.inject.Inject
@@ -20,6 +21,7 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
     private val eventsSwitcher = MutableLiveData<Boolean>()
     val events: LiveData<HashMap<String, Int>>
+    val data: LiveData<TodayData> = eventsRepo.getTodayData()
 
     init {
         events = Transformations.switchMap(eventsSwitcher) {
@@ -28,6 +30,7 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
             }
             return@switchMap AbsentLiveData.create<HashMap<String, Int>>()
         }
+
     }
 
     fun loadEvents() {

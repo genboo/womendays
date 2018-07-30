@@ -7,6 +7,7 @@ import ru.spcm.apps.womendays.model.db.dao.EventsDao
 import ru.spcm.apps.womendays.model.db.dao.SettingsDao
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.Setting
+import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.tools.AppExecutors
 import ru.spcm.apps.womendays.tools.DateHelper
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
@@ -33,6 +34,34 @@ constructor(private val appExecutors: AppExecutors,
         appExecutors.diskIO().execute {
             eventsDao.delete(event)
         }
+    }
+
+    fun getTodayData(): LiveData<TodayData> {
+        val data = MutableLiveData<TodayData>()
+
+        appExecutors.diskIO().execute {
+            val todayData = TodayData()
+            val lastMonthly = eventsDao.getLastMonthly()
+            if (lastMonthly != null) {
+                val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
+
+                val lastMonthlyDate = Calendar.getInstance()
+                lastMonthlyDate.timeInMillis = lastMonthly.date.time
+                val now = Calendar.getInstance()
+                var diff = ((now.timeInMillis - lastMonthlyDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+                if (diff / period >= 1) {
+                    diff -= period * (diff / period)
+                }
+                diff++
+                todayData.cycleDay = diff
+                todayData.daysLeft = period - diff
+            }
+            appExecutors.mainThread().execute {
+                data.postValue(todayData)
+            }
+        }
+
+        return data
     }
 
     fun getEvents(): LiveData<HashMap<String, Int>> {
@@ -75,7 +104,7 @@ constructor(private val appExecutors: AppExecutors,
 
             calendar.add(Calendar.DAY_OF_MONTH, period)
             ovuCalendar.add(Calendar.DAY_OF_MONTH, period / 2)
-            for(i in 1..12) {
+            for (i in 1..12) {
                 for (day in 1..length) {
                     val date = DateHelper.formatYearMonthDay(calendar.time)
                     val flag: Int = events[date] ?: 0

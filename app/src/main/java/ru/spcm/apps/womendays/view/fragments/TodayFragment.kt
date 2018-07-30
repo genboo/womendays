@@ -6,6 +6,7 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.view.components.slideIn
 import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
@@ -31,9 +32,8 @@ class TodayFragment : BaseFragment() {
 
         val viewModel = getViewModel(this, DayViewModel::class.java)
         viewModel.events.observe(this, Observer { observeEvents(it) })
+        viewModel.data.observe(this, Observer { observeTodayData(it) })
         calendarView.postDelayed({ viewModel.loadEvents() }, 200)
-
-        dayWidget.setDaysLeftCount(10)
 
         getFab().setOnClickListener {
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
@@ -41,6 +41,12 @@ class TodayFragment : BaseFragment() {
                     viewModel.delete(id)
                 })
             })
+        }
+    }
+
+    private fun observeTodayData(data: TodayData?) {
+        if (data != null) {
+            dayWidget.setData(data)
         }
     }
 
