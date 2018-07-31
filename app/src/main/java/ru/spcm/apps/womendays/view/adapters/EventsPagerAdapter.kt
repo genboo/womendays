@@ -55,7 +55,8 @@ abstract class EventsPagerAdapter : PagerAdapter() {
         const val FLAG_SEX_SAFE = 0x00000001
         const val FLAG_SEX_UNSAFE = 0x00000010
         const val FLAG_MONTHLY = 0x00000100
-        const val FLAG_OVULATION = 0x00001000
+        const val FLAG_MONTHLY_CONFIRMED = 0x00001000
+        const val FLAG_OVULATION = 0x00010000
     }
 
 }

@@ -162,7 +162,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
                 canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
                 canvas.drawCircle(x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, 6f, monthlyPaint)
             }
-            if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0) {
+            if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0 || flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED > 0) {
                 canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyPaint)
             }
             if (flag and EventsPagerAdapter.FLAG_OVULATION > 0) {
