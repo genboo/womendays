@@ -29,6 +29,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     internal val monthPaint = Paint()
     internal val dayPaint = Paint()
+    private val daysOfWeekPaint = Paint()
     private val highlightPaint = Paint()
     private val monthlyPaint = Paint()
     private val ovulationPaint = Paint()
@@ -100,6 +101,11 @@ abstract class CalendarPageView(context: Context) : View(context) {
         dayPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
         dayPaint.textAlign = Paint.Align.CENTER
         dayPaint.isAntiAlias = true
+
+        daysOfWeekPaint.color = mainTextColor
+        daysOfWeekPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
+        daysOfWeekPaint.textAlign = Paint.Align.CENTER
+        daysOfWeekPaint.isAntiAlias = true
 
         highlightPaint.color = ContextCompat.getColor(context, R.color.colorShadow)
         highlightPaint.alpha = rippleAlpha
@@ -174,7 +180,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         for (col in 0 until DAYS_IN_WEEK) {
             val label = dayOfWeekLabels[col]
             val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
-            canvas.drawText(label, colCenter, paddingTop + monthLabelHeight + cellHeight / 2, dayPaint)
+            canvas.drawText(label, colCenter, paddingTop + monthLabelHeight + cellHeight / 2, daysOfWeekPaint)
         }
     }
 

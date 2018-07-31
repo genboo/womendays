@@ -28,9 +28,7 @@ class SimplyWeekView(context: Context) : CalendarPageView(context) {
         val c = calendar.clone() as Calendar
         for (day in 0 until DAYS_IN_WEEK) {
             val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
-
             drawDayWithEvents(canvas, c, colCenter, rowCenter - halfLineHeight, halfLineHeight, dayPaint)
-
             col++
             c.add(Calendar.DAY_OF_MONTH, 1)
         }
