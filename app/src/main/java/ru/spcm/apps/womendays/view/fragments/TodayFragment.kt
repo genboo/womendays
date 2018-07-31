@@ -33,7 +33,7 @@ class TodayFragment : BaseFragment() {
         val viewModel = getViewModel(this, DayViewModel::class.java)
         viewModel.events.observe(this, Observer { observeEvents(it) })
         viewModel.data.observe(this, Observer { observeTodayData(it) })
-        calendarView.postDelayed({ viewModel.loadEvents() }, 200)
+        viewModel.eventsObserver.observe(this, Observer { viewModel.loadEvents() })
 
         getFab().setOnClickListener {
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
@@ -42,6 +42,14 @@ class TodayFragment : BaseFragment() {
                 })
             })
         }
+
+        dayWidget.setAddMonthlyListener(View.OnClickListener {
+            viewModel.save(Event.Type.MONTHLY).observe(this, Observer { id ->
+                showSnack(R.string.action_added, View.OnClickListener {
+                    viewModel.delete(id)
+                })
+            })
+        })
     }
 
     private fun observeTodayData(data: TodayData?) {

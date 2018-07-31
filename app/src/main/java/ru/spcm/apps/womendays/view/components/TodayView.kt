@@ -5,15 +5,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.support.v4.content.ContextCompat
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.style.LineHeightSpan
 import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.layout_today.view.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.TodayData
 import java.text.SimpleDateFormat
@@ -66,10 +65,17 @@ class TodayView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         builder.append(String.format(pattern, dateFormatter.format(Calendar.getInstance().time).capitalize(), data.cycleDay, data.daysLeft, dayLabel))
         val textLabel = builder.toString()
         val secondLineStart = textLabel.indexOf('\n') + 1
-        builder.setSpan(RelativeSizeSpan(1.5f), 0, secondLineStart, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        val thirdLineStart = textLabel.indexOf('\n', secondLineStart) + 1
+        builder.setSpan(RelativeSizeSpan(0.7f), 0, secondLineStart, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        builder.setSpan(RelativeSizeSpan(1.5f), secondLineStart, thirdLineStart, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        builder.setSpan(RelativeSizeSpan(0.8f), thirdLineStart, builder.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         return builder
     }
 
+
+    fun setAddMonthlyListener(listener: View.OnClickListener) {
+        addMonthly.setOnClickListener(listener)
+    }
 
 }

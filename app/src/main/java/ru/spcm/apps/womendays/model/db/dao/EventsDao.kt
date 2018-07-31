@@ -22,4 +22,7 @@ interface EventsDao {
 
     @Query("SELECT * FROM Event WHERE type = 'MONTHLY' ORDER BY date DESC LIMIT 1")
     fun getLastMonthly(): Event?
+
+    @Query("SELECT * FROM Event ORDER BY date DESC LIMIT 1")
+    fun getLastEvent():LiveData<Event>
 }

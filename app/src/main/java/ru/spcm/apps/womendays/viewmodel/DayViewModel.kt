@@ -22,6 +22,7 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
     private val eventsSwitcher = MutableLiveData<Boolean>()
     val events: LiveData<HashMap<String, Int>>
     val data: LiveData<TodayData> = eventsRepo.getTodayData()
+    val eventsObserver: LiveData<Event> = eventsRepo.getLastEvent()
 
     init {
         events = Transformations.switchMap(eventsSwitcher) {

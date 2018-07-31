@@ -14,9 +14,10 @@
     <string name="action_canceled">Отменено</string>
     <string name="action_save">Сохранить</string>
     <string name="action_saved">Сохранено</string>
+    <string name="action_add_monthly">Отметить месячные</string>
 
     <string name="view_days_left">осталось</string>
-    <string name="view_days_pattern">%s\n%s день цикла\nДо начала осталось\n %s %s</string>
+    <string name="view_days_pattern">%s\n%s день цикла\nМесячные через\n %s %s</string>
     <string name="view_day_one">день</string>
     <string name="view_day_two">дней</string>
     <string name="view_day_three">дня</string>

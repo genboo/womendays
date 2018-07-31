@@ -36,6 +36,10 @@ constructor(private val appExecutors: AppExecutors,
         }
     }
 
+    fun getLastEvent():LiveData<Event>{
+        return eventsDao.getLastEvent()
+    }
+
     fun getTodayData(): LiveData<TodayData> {
         val data = MutableLiveData<TodayData>()
 
