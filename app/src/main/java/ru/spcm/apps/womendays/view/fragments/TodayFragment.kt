@@ -7,8 +7,8 @@ import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.TodayData
-import ru.spcm.apps.womendays.view.components.slideIn
-import ru.spcm.apps.womendays.view.components.slideOut
+import ru.spcm.apps.womendays.view.components.fadeIn
+import ru.spcm.apps.womendays.view.components.fadeOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
@@ -74,12 +74,12 @@ class TodayFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        getFab().slideIn(Gravity.END)
+        getFab().fadeIn()
     }
 
     override fun onPause() {
         super.onPause()
-        getFab().slideOut(Gravity.END)
+        getFab().fadeOut()
     }
 }
 
