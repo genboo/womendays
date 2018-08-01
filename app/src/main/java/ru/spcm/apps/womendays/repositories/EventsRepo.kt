@@ -39,41 +39,44 @@ constructor(private val appExecutors: AppExecutors,
             val calendar = DateHelper.getZeroHourCalendar(event.date)
             calendar.add(Calendar.DAY_OF_MONTH, -1)
 
-            //Пробуем получить MONTHLY_CONFIRMED за предыдущий день
-            val yesterdayMonthly = eventsDao.getEventMonthlyAtDay(calendar.time)
-            if (yesterdayMonthly == null) {
-                //Если таких нет, значит это первый день цикла, нужно сохранить MONTHLY_CONFIRMED на Setting.Type.LENGTH дней и пересчитать циклы на год
-                calendar.timeInMillis = event.date.time
+            //Если сегодня нет отмеченных месячных
+            val todayMonthly = eventsDao.getEventMonthlyAtDay(event.date)
+            if (todayMonthly == null) {
+                //Пробуем получить MONTHLY_CONFIRMED за предыдущий день
+                val yesterdayMonthly = eventsDao.getEventMonthlyAtDay(calendar.time)
+                if (yesterdayMonthly == null) {
+                    //Если таких нет, значит это первый день цикла, нужно сохранить MONTHLY_CONFIRMED на Setting.Type.LENGTH дней и пересчитать циклы на год
+                    calendar.timeInMillis = event.date.time
 
-                eventsDao.clearEvents()
+                    eventsDao.clearEvents()
 
-                val length = settingsDao.getSettingValueInt(Setting.Type.LENGTH.toString())
-                val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
+                    val length = settingsDao.getSettingValueInt(Setting.Type.LENGTH.toString())
+                    val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
 
-                val eventsList = ArrayList<Event>()
-                for (day in 1..length) {
-                    val item = Event(Event.Type.MONTHLY_CONFIRMED)
-                    item.date = calendar.time
-                    eventsList.add(item)
-                    calendar.add(Calendar.DAY_OF_MONTH, 1)
-                }
-
-                for (month in 1..12) {
-                    calendar.add(Calendar.DAY_OF_MONTH, period - length)
+                    val eventsList = ArrayList<Event>()
                     for (day in 1..length) {
-                        val item = Event(Event.Type.MONTHLY)
+                        val item = Event(Event.Type.MONTHLY_CONFIRMED)
                         item.date = calendar.time
                         eventsList.add(item)
                         calendar.add(Calendar.DAY_OF_MONTH, 1)
                     }
+
+                    for (month in 1..12) {
+                        calendar.add(Calendar.DAY_OF_MONTH, period - length)
+                        for (day in 1..length) {
+                            val item = Event(Event.Type.MONTHLY)
+                            item.date = calendar.time
+                            eventsList.add(item)
+                            calendar.add(Calendar.DAY_OF_MONTH, 1)
+                        }
+                    }
+                    eventsDao.insert(eventsList)
+
+                } else {
+                    //Если есть, значит это продолжение цикла, нужно просто добавить MONTHLY_CONFIRMED, если за этот день таких нет
+                    value = eventsDao.insert(event)
                 }
-                eventsDao.insert(eventsList)
-
-            } else if (eventsDao.getEventMonthlyAtDay(event.date) == null) {
-                //Если есть, значит это продолжение цикла, нужно просто добавить MONTHLY_CONFIRMED, если за этот день таких нет
-                value = eventsDao.insert(event)
             }
-
             appExecutors.mainThread().execute {
                 result.postValue(value)
             }
@@ -96,13 +99,7 @@ constructor(private val appExecutors: AppExecutors,
 
         appExecutors.diskIO().execute {
             val todayData = TodayData()
-            val calendar = DateHelper.getZeroHourCalendar()
-            var lastMonthly = eventsDao.getLastMonthly(calendar.time)
-            do {
-                calendar.add(Calendar.DAY_OF_MONTH, -1)
-                val yesterdayEvent = eventsDao.getEventMonthlyAtDay(calendar.time) ?: break
-                lastMonthly = yesterdayEvent
-            } while (true)
+            val lastMonthly = getLastMonthly(DateHelper.getZeroHourCalendar())
 
             if (lastMonthly != null) {
                 val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
@@ -155,16 +152,9 @@ constructor(private val appExecutors: AppExecutors,
     @WorkerThread
     private fun setMonthly(events: HashMap<String, Int>) {
         val calendar = DateHelper.getZeroHourCalendar()
-        var lastMonthly = eventsDao.getLastMonthly(calendar.time)
-        do {
-            calendar.add(Calendar.DAY_OF_MONTH, -1)
-            val yesterdayEvent = eventsDao.getEventMonthlyAtDay(calendar.time) ?: break
-            lastMonthly = yesterdayEvent
-        } while (true)
-
+        val lastMonthly = getLastMonthly(calendar)
         if (lastMonthly != null) {
             val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
-
             calendar.timeInMillis = lastMonthly.date.time
             val ovuCalendar = calendar.clone() as Calendar
 
@@ -180,6 +170,17 @@ constructor(private val appExecutors: AppExecutors,
             }
 
         }
+    }
+
+    @WorkerThread
+    private fun getLastMonthly(calendar: Calendar): Event? {
+        var lastMonthly = eventsDao.getLastMonthly(calendar.time)
+        do {
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+            val yesterdayEvent = eventsDao.getEventMonthlyAtDay(calendar.time) ?: break
+            lastMonthly = yesterdayEvent
+        } while (true)
+        return lastMonthly
     }
 
 }
