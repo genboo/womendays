@@ -32,6 +32,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
     private val daysOfWeekPaint = Paint()
     private val highlightPaint = Paint()
     private val monthlyPaint = Paint()
+    private val monthlyConfirmedPaint = Paint()
     private val ovulationPaint = Paint()
     private val dayOfWeekLabels = arrayOf(
             context.getString(R.string.calendar_monday),
@@ -45,7 +46,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     internal var cellWidth: Int = 0
 
-    internal val calendar = Calendar.getInstance()
+    internal val calendar = DateHelper.getZeroHourCalendar()
     internal var daysInMonth = 31
     internal var weekStart = DEFAULT_WEEK_START
     internal var dayOfWeekStart = 0
@@ -115,6 +116,10 @@ abstract class CalendarPageView(context: Context) : View(context) {
         monthlyPaint.isAntiAlias = true
         monthlyPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_width).toFloat()
 
+        monthlyConfirmedPaint.color = ContextCompat.getColor(context, R.color.colorMonthlyConfirmed)
+        monthlyConfirmedPaint.isAntiAlias = true
+        monthlyConfirmedPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_width).toFloat()
+
         ovulationPaint.color = ContextCompat.getColor(context, R.color.colorOvulation)
         ovulationPaint.isAntiAlias = true
         ovulationPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_ovulation_width).toFloat()
@@ -162,9 +167,15 @@ abstract class CalendarPageView(context: Context) : View(context) {
                 canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
                 canvas.drawCircle(x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, 6f, monthlyPaint)
             }
-            if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0 || flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED > 0) {
+
+            if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0 && flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED == 0) {
                 canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyPaint)
             }
+
+            if (flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED > 0) {
+                canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyConfirmedPaint)
+            }
+
             if (flag and EventsPagerAdapter.FLAG_OVULATION > 0) {
                 canvas.drawCircle(x, y + halfLineHeight, ovulationRadius, ovulationPaint)
             }

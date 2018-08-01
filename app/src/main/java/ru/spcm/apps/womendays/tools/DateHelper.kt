@@ -10,4 +10,17 @@ object DateHelper {
     fun formatYearMonthDay(date: Date): String {
         return DATE_FORMATTER_YYYY_MM_DD.format(date)
     }
+
+    fun getZeroHourCalendar(date: Date? = null): Calendar {
+        val calendar = Calendar.getInstance()
+        if (date != null) {
+            calendar.timeInMillis = date.time
+        }
+        calendar.set(Calendar.HOUR, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar
+    }
+
 }

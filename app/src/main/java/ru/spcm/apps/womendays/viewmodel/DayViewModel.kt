@@ -31,7 +31,6 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
             }
             return@switchMap AbsentLiveData.create<HashMap<String, Int>>()
         }
-
     }
 
     fun loadEvents() {
@@ -40,6 +39,10 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
     fun save(type: Event.Type): LiveData<Long> {
         return eventsRepo.save(Event(type))
+    }
+
+    fun updateMonthly(): LiveData<Long> {
+        return eventsRepo.updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
     }
 
     fun delete(id: Long?) {

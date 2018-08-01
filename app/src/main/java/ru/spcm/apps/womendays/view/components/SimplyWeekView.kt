@@ -3,6 +3,7 @@ package ru.spcm.apps.womendays.view.components
 import android.content.Context
 import android.graphics.Canvas
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.tools.DateHelper
 import java.util.*
 
 
@@ -39,10 +40,10 @@ class SimplyWeekView(context: Context) : CalendarPageView(context) {
         calendar.add(Calendar.DAY_OF_MONTH, daysOffset)
         dayOfWeekStart = calendar.get(Calendar.DAY_OF_WEEK)
         this.weekStart = weekStart
-        val today = Calendar.getInstance()
+        val today = DateHelper.getZeroHourCalendar()
         val c = calendar.clone() as Calendar
         for (day in 0 until DAYS_IN_WEEK) {
-            if (sameDay(today, c.get(Calendar.DAY_OF_MONTH))) {
+            if (c == today) {
                 now = c.get(Calendar.DAY_OF_MONTH)
                 break
             }

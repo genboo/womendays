@@ -44,11 +44,7 @@ class TodayFragment : BaseFragment() {
         }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener {
-            viewModel.save(Event.Type.MONTHLY).observe(this, Observer { id ->
-                showSnack(R.string.action_added, View.OnClickListener {
-                    viewModel.delete(id)
-                })
-            })
+            viewModel.updateMonthly().observe(this, Observer { showSnack(R.string.action_added, null) })
         })
     }
 
