@@ -6,6 +6,7 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.view.components.fadeIn
 import ru.spcm.apps.womendays.view.components.fadeOut
@@ -37,14 +38,14 @@ class TodayFragment : BaseFragment() {
 
         getFab().setOnClickListener {
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
-                showSnack(R.string.action_added, View.OnClickListener {
+                showSnack(R.string.action_added, View.OnClickListener { _ ->
                     viewModel.delete(id)
                 })
             })
         }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener {
-            viewModel.updateMonthly().observe(this, Observer { showSnack(R.string.action_added, null) })
+            viewModel.updateMonthly().observe(this, Observer { _ -> showSnack(R.string.action_added, null) })
         })
     }
 
@@ -54,7 +55,7 @@ class TodayFragment : BaseFragment() {
         }
     }
 
-    private fun observeEvents(data: HashMap<String, Int>?) {
+    private fun observeEvents(data: EventsData?) {
         if (data != null) {
             calendarView.setEvents(data)
         }

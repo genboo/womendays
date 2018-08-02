@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.repositories.EventsRepo
 import ru.spcm.apps.womendays.tools.AbsentLiveData
@@ -20,7 +21,7 @@ class DayViewModel @Inject
 internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
     private val eventsSwitcher = MutableLiveData<Boolean>()
-    val events: LiveData<HashMap<String, Int>>
+    val events: LiveData<EventsData>
     val data: LiveData<TodayData> = eventsRepo.getTodayData()
     val eventsObserver: LiveData<Event> = eventsRepo.getLastEvent()
 
@@ -29,7 +30,7 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
             if (it) {
                 return@switchMap eventsRepo.getEvents()
             }
-            return@switchMap AbsentLiveData.create<HashMap<String, Int>>()
+            return@switchMap AbsentLiveData.create<EventsData>()
         }
     }
 

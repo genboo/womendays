@@ -3,18 +3,18 @@ package ru.spcm.apps.womendays.view.adapters
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import ru.spcm.apps.womendays.model.dto.EventsData
 import java.util.*
-import kotlin.collections.HashMap
 
 abstract class EventsPagerAdapter : PagerAdapter() {
 
     val minDate: Calendar = Calendar.getInstance()
     val maxDate: Calendar = Calendar.getInstance()
-    var events: HashMap<String, Int> = HashMap()
+    var events: EventsData = EventsData()
 
     var size = 0
 
-    fun setEventsList(data: HashMap<String, Int>) {
+    fun setEventsList(data: EventsData) {
         events = data
         notifyDataSetChanged()
     }

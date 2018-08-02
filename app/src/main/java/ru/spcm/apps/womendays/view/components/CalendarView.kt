@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.MonthPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.WeekPagerAdapter
@@ -49,7 +50,7 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
 
     }
 
-    fun setEvents(events: HashMap<String, Int>) {
+    fun setEvents(events: EventsData) {
         (calendarPager.adapter as EventsPagerAdapter).setEventsList(events)
     }
 

@@ -3,9 +3,11 @@ package ru.spcm.apps.womendays.repositories
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.WorkerThread
+import android.util.LongSparseArray
 import ru.spcm.apps.womendays.model.db.dao.EventsDao
 import ru.spcm.apps.womendays.model.db.dao.SettingsDao
 import ru.spcm.apps.womendays.model.dto.Event
+import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.model.dto.Setting
 import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.tools.AppExecutors
@@ -121,14 +123,13 @@ constructor(private val appExecutors: AppExecutors,
         return data
     }
 
-    fun getEvents(): LiveData<HashMap<String, Int>> {
-        val data = MutableLiveData<HashMap<String, Int>>()
+    fun getEvents(): LiveData<EventsData> {
+        val data = MutableLiveData<EventsData>()
         appExecutors.diskIO().execute {
-            val events = HashMap<String, Int>()
-            val e = eventsDao.getEvents()
-            e.forEach {
-                val date = DateHelper.formatYearMonthDay(it.date)
-                var flag: Int = events[date] ?: 0
+            val eventsData = EventsData()
+            val events = eventsDao.getEvents()
+            events.forEach {
+                var flag: Int = eventsData.events[it.date.time] ?: 0
 
                 flag = when (it.type) {
                     Event.Type.SEX_SAFE -> flag or EventsPagerAdapter.FLAG_SEX_SAFE
@@ -136,21 +137,52 @@ constructor(private val appExecutors: AppExecutors,
                     Event.Type.MONTHLY -> flag or EventsPagerAdapter.FLAG_MONTHLY
                     Event.Type.MONTHLY_CONFIRMED -> flag or EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED
                 }
-                events[date] = flag
+                eventsData.events.put(it.date.time, flag)
+            }
+            setOvu(eventsData.events)
+
+            val monthly = eventsDao.getAllMonthly()
+            if (monthly.isNotEmpty()) {
+                val firstMonthly = monthly.first()
+                val lastMonthly = monthly.last()
+                val calendar = DateHelper.getZeroHourCalendar(firstMonthly.date)
+                var counter = 1
+                var inRow = true
+                do {
+
+                    val flag = eventsData.events[calendar.timeInMillis] ?: 0
+                    if (inRow && !isMonthly(flag)) {
+                        inRow = false
+                    }
+                    if (!inRow && isMonthly(flag)) {
+                        counter = 1
+                        inRow = true
+                    }
+                    eventsData.cycle.put(calendar.timeInMillis, counter)
+
+                    counter++
+                    calendar.add(Calendar.DAY_OF_MONTH, 1)
+                    if (calendar.timeInMillis > lastMonthly.date.time) {
+                        break
+                    }
+                } while (true)
             }
 
-            setMonthly(events)
-
             appExecutors.mainThread().execute {
-                data.postValue(events)
+                data.postValue(eventsData)
             }
         }
 
         return data
     }
 
+
+    private fun isMonthly(flag: Int): Boolean {
+        return flag and EventsPagerAdapter.FLAG_MONTHLY > 0 || flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED > 0
+    }
+
     @WorkerThread
-    private fun setMonthly(events: HashMap<String, Int>) {
+    private fun setOvu(events: LongSparseArray<Int>) {
         val calendar = DateHelper.getZeroHourCalendar()
         val lastMonthly = getLastMonthly(calendar)
         if (lastMonthly != null) {
@@ -162,10 +194,8 @@ constructor(private val appExecutors: AppExecutors,
             ovuCalendar.add(Calendar.DAY_OF_MONTH, period / 2)
             for (i in 1..12) {
                 calendar.add(Calendar.DAY_OF_MONTH, period)
-
-                val date = DateHelper.formatYearMonthDay(ovuCalendar.time)
-                val flag: Int = events[date] ?: 0
-                events[date] = flag or EventsPagerAdapter.FLAG_OVULATION
+                val flag: Int = events[ovuCalendar.timeInMillis] ?: 0
+                events.put(ovuCalendar.timeInMillis, flag or EventsPagerAdapter.FLAG_OVULATION)
                 ovuCalendar.add(Calendar.DAY_OF_MONTH, period)
             }
 

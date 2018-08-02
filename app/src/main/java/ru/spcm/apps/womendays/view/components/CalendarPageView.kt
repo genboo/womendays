@@ -8,27 +8,30 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import ru.spcm.apps.womendays.R
+import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.tools.DateHelper
 import ru.spcm.apps.womendays.tools.Logger
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import java.text.NumberFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 abstract class CalendarPageView(context: Context) : View(context) {
     internal var paddedWidth = 0
     internal var paddedHeight = 0
     private val shiftIcon: Int
     private val shiftMonthly: Int
+    private val shiftCycle: Int
 
     internal val monthPaint = Paint()
     internal val dayPaint = Paint()
+    private val cyclePaint = Paint()
     private val daysOfWeekPaint = Paint()
     private val highlightPaint = Paint()
     private val monthlyPaint = Paint()
@@ -75,8 +78,11 @@ abstract class CalendarPageView(context: Context) : View(context) {
     private val radiusProperty = RadiusProperty()
     private val circleAlphaProperty = RippleAlphaProperty()
 
-    private var events: HashMap<String, Int> = HashMap()
+    private var eventsData: EventsData = EventsData()
     private val heartBitmap: Bitmap
+
+    private var dayTextSize: Float = 14f
+    private var todayTextSize: Float = 16f
 
     private var ovulationRadius = 16f
 
@@ -85,9 +91,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
         todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
 
         monthLabelHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_height).toFloat()
-        val iconSize = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_size)
         shiftIcon = context.resources.getDimensionPixelSize(R.dimen.calendar_icon_shift)
         shiftMonthly = context.resources.getDimensionPixelSize(R.dimen.calendar_monthly_shift)
+        shiftCycle = context.resources.getDimensionPixelSize(R.dimen.calendar_cycle_shift)
         ovulationRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_ovulation_radius).toFloat()
 
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
@@ -98,10 +104,18 @@ abstract class CalendarPageView(context: Context) : View(context) {
         monthPaint.textAlign = Paint.Align.CENTER
         monthPaint.isAntiAlias = true
 
+        dayTextSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
+        todayTextSize = context.resources.getDimensionPixelSize(R.dimen.calendar_today_text_size).toFloat()
+
         dayPaint.color = mainTextColor
-        dayPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
+        dayPaint.textSize = dayTextSize
         dayPaint.textAlign = Paint.Align.CENTER
         dayPaint.isAntiAlias = true
+
+        cyclePaint.color = ContextCompat.getColor(context, R.color.colorPrimary)
+        cyclePaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_cycle_text_size).toFloat()
+        cyclePaint.textAlign = Paint.Align.CENTER
+        cyclePaint.isAntiAlias = true
 
         daysOfWeekPaint.color = mainTextColor
         daysOfWeekPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_day_text_size).toFloat()
@@ -128,7 +142,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.ic_heart)
 
         if (drawable != null) {
-            heartBitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
+            heartBitmap = Bitmap.createBitmap(cellHeight.toInt() - shiftIcon, cellHeight.toInt() - shiftIcon, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(heartBitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
@@ -142,7 +156,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
     /**
      * Draw one day with highlight and events
      */
-    fun drawDayWithEvents(canvas: Canvas, c: Calendar, x: Float, y: Float, halfLineHeight: Float, paint: Paint) {
+    fun drawDayWithEvents(canvas: Canvas, c: Calendar, x: Float, y: Float, halfLineHeight: Float) {
         val day = c.get(Calendar.DAY_OF_MONTH)
 
         if (day == highlightedDay) {
@@ -151,20 +165,22 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
         if (day == now) {
             dayPaint.color = todayTextColor
+            dayPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            dayPaint.textSize = todayTextSize
         } else {
             dayPaint.color = mainTextColor
+            dayPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            dayPaint.textSize = dayTextSize
         }
 
-        canvas.drawText(dayFormatter.format(day), x, y, paint)
-
-        val date = DateHelper.formatYearMonthDay(c.time)
-        val flag: Int = events[date] ?: 0
-        if(flag != 0) {
+        val flag: Int = eventsData.events[c.timeInMillis] ?: 0
+        if (flag != 0) {
             if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
-                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
+                canvas.drawBitmap(heartBitmap, x - heartBitmap.width / 2, y - cellHeight / 2, monthlyPaint)
             }
+
             if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
-                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, monthlyPaint)
+                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2, monthlyPaint)
                 canvas.drawCircle(x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, 6f, monthlyPaint)
             }
 
@@ -174,12 +190,19 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
             if (flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED > 0) {
                 canvas.drawLine(x - cellWidth / 2, y + shiftMonthly, x + cellWidth / 2, y + shiftMonthly, monthlyConfirmedPaint)
+                dayPaint.color = monthlyConfirmedPaint.color
             }
 
             if (flag and EventsPagerAdapter.FLAG_OVULATION > 0) {
                 canvas.drawCircle(x, y + halfLineHeight, ovulationRadius, ovulationPaint)
             }
         }
+
+        val cycleDay = eventsData.cycle[c.timeInMillis] ?: 0
+        if (cycleDay != 0) {
+            canvas.drawText(dayFormatter.format(cycleDay), x + shiftCycle - halfLineHeight, y - shiftCycle, cyclePaint)
+        }
+        canvas.drawText(dayFormatter.format(day), x, y, dayPaint)
 
     }
 
@@ -314,8 +337,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
         invalidate()
     }
 
-    fun setEvents(events: HashMap<String, Int>) {
-        this.events = events
+    fun setEvents(events: EventsData) {
+        eventsData = events
     }
 
     companion object {

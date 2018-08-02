@@ -32,7 +32,7 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         for (day in 1..daysInMonth) {
             val colCenter = cellWidth * col + cellWidth / 2f + paddingStart
 
-            drawDayWithEvents(canvas, c, colCenter, rowCenter - halfLineHeight, halfLineHeight, dayPaint)
+            drawDayWithEvents(canvas, c, colCenter, rowCenter - halfLineHeight, halfLineHeight)
 
             col++
             if (col == DAYS_IN_WEEK) {

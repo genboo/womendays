@@ -24,6 +24,9 @@ interface EventsDao {
     @Query("SELECT * FROM Event")
     fun getEvents(): List<Event>
 
+    @Query("SELECT * FROM Event WHERE type in ('MONTHLY_CONFIRMED', 'MONTHLY') ORDER BY date")
+    fun getAllMonthly(): List<Event>
+
     @Query("SELECT * FROM Event WHERE type = 'MONTHLY_CONFIRMED' AND date <= :date ORDER BY date DESC LIMIT 1")
     fun getLastMonthly(date: Date): Event?
 
