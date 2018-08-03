@@ -24,60 +24,9 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/monthlyLengthTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:labelFor="@id/monthlyLength"
-                android:text="@string/monthly_length"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
-
-            <EditText
-                android:id="@+id/monthlyLength"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="2"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/monthlyLengthTitle" />
-
-            <TextView
-                android:id="@+id/monthlyLengthDays"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/period_days"
-                app:layout_constraintBottom_toBottomOf="@id/monthlyLength"
-                app:layout_constraintLeft_toRightOf="@id/monthlyLength"
-                app:layout_constraintTop_toBottomOf="@id/monthlyLengthTitle" />
-
-            <TextView
-                android:id="@+id/monthlyPeriodTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:labelFor="@id/monthlyPeriod"
-                android:text="@string/monthly_period"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/monthlyLength" />
-
-            <EditText
-                android:id="@+id/monthlyPeriod"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="2"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/monthlyPeriodTitle" />
-
-            <TextView
-                android:id="@+id/monthlyPeriodDays"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/period_days"
-                app:layout_constraintBottom_toBottomOf="@id/monthlyPeriod"
-                app:layout_constraintLeft_toRightOf="@id/monthlyPeriod"
-                app:layout_constraintTop_toBottomOf="@+id/monthlyPeriodTitle" />
+            <include
+                android:id="@+id/mainSettingsBlock"
+                layout="@layout/layout_main_settings"/>
 
             <TextView
                 android:id="@+id/monthlyFirstDateLabel"
@@ -87,7 +36,7 @@
                 android:text="@string/monthly_first_date"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/monthlyPeriod" />
+                app:layout_constraintTop_toBottomOf="@id/mainSettingsBlock" />
 
             <EditText
                 android:id="@+id/monthlyFirstDate"

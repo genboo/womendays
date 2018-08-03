@@ -50,7 +50,7 @@ constructor(private val appExecutors: AppExecutors,
                     //Если таких нет, значит это первый день цикла, нужно сохранить MONTHLY_CONFIRMED на Setting.Type.LENGTH дней и пересчитать циклы на год
                     calendar.timeInMillis = event.date.time
 
-                    eventsDao.clearEvents()
+                    eventsDao.clearMonthly()
 
                     val length = settingsDao.getSettingValueInt(Setting.Type.LENGTH.toString())
                     val period = settingsDao.getSettingValueInt(Setting.Type.PERIOD.toString())
@@ -149,7 +149,6 @@ constructor(private val appExecutors: AppExecutors,
                 var counter = 1
                 var inRow = true
                 do {
-
                     val flag = eventsData.events[calendar.timeInMillis] ?: 0
                     if (inRow && !isMonthly(flag)) {
                         inRow = false

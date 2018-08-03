@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_first_launch.*
 import kotlinx.android.synthetic.main.layout_app_bar_main.*
+import kotlinx.android.synthetic.main.layout_main_settings.*
 import ru.spcm.apps.womendays.App
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.di.components.AppComponent
@@ -48,7 +49,7 @@ class FirstLaunchActivity : AppCompatActivity() {
                 viewModel.save(Setting.Type.LENGTH, monthlyLength.text.toString())
                 viewModel.save(Setting.Type.PERIOD, monthlyPeriod.text.toString())
                 val event = Event(Event.Type.MONTHLY_CONFIRMED)
-                event.date = selectedDate ?: Date()
+                event.date = DateHelper.getZeroHourCalendar(selectedDate ?: Date()).time
                 viewModel.updateMonthly(event)
                 finish()
             }

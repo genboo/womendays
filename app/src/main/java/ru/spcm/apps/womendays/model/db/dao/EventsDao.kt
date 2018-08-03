@@ -37,6 +37,6 @@ interface EventsDao {
     fun getEventMonthlyAtDay(date: Date): Event?
 
     @Query("DELETE FROM Event WHERE type='MONTHLY'")
-    fun clearEvents()
+    fun clearMonthly()
 
 }

@@ -13,10 +13,9 @@ data class Event(@PrimaryKey(autoGenerate = true) var id: Long) {
     @Ignore
     constructor(type: Type) : this(0) {
         this.type = type
-        date = DateHelper.getZeroHourCalendar(date).time
     }
 
-    var date: Date = Date()
+    var date: Date = DateHelper.getZeroHourCalendar().time
 
     var type: Type = Type.MONTHLY
 

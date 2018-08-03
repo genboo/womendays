@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.layout_app_bar_main.*
+import kotlinx.android.synthetic.main.layout_main_settings.*
 import ru.spcm.apps.womendays.App
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.di.components.AppComponent

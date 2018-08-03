@@ -12,11 +12,11 @@ object DateHelper {
     }
 
     fun getZeroHourCalendar(date: Date? = null): Calendar {
-        val calendar = Calendar.getInstance()
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         if (date != null) {
             calendar.timeInMillis = date.time
         }
-        calendar.set(Calendar.HOUR, 0)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
