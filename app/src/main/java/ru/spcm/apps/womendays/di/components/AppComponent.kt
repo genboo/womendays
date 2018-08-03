@@ -10,6 +10,7 @@ import dagger.Component
 import ru.spcm.apps.womendays.di.ViewModelModule
 import ru.spcm.apps.womendays.di.modules.DbModule
 import ru.spcm.apps.womendays.di.modules.NavigationModule
+import ru.spcm.apps.womendays.view.activities.FirstLaunchActivity
 import ru.spcm.apps.womendays.view.activities.MainActivity
 import ru.spcm.apps.womendays.view.activities.SettingsActivity
 import ru.spcm.apps.womendays.view.fragments.BaseFragment
@@ -33,6 +34,8 @@ interface AppComponent {
     fun inject(activity: MainActivity)
 
     fun inject(activity: SettingsActivity)
+
+    fun inject(activity: FirstLaunchActivity)
 
     fun inject(fragment: BaseFragment)
 

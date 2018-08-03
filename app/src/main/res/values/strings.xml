@@ -4,9 +4,11 @@
     <string name="menu_calendar">Календарь</string>
     <string name="menu_today">Сегодня</string>
     <string name="menu_settings">Настройки</string>
+    <string name="menu_first_launch">Первый запуск</string>
 
     <string name="monthly_length">Длительнсть</string>
     <string name="monthly_period">Цикл</string>
+    <string name="monthly_first_date">Начало последних месячных</string>
     <string name="period_days">дня(ей)</string>
 
     <string name="action_cancel">Отменить</string>

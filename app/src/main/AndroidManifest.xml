@@ -31,6 +31,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Main.NoActionBar" />
 
+        <activity
+            android:name=".view.activities.FirstLaunchActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Main.NoActionBar" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="fbdaf7e080720e8dc5931742be529681b10279f5" />

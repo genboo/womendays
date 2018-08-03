@@ -1,6 +1,7 @@
 package ru.spcm.apps.womendays.view.fragments
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_today.*
@@ -8,6 +9,7 @@ import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.model.dto.TodayData
+import ru.spcm.apps.womendays.view.activities.FirstLaunchActivity
 import ru.spcm.apps.womendays.view.components.fadeIn
 import ru.spcm.apps.womendays.view.components.fadeOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
@@ -34,19 +36,28 @@ class TodayFragment : BaseFragment() {
         val viewModel = getViewModel(this, DayViewModel::class.java)
         viewModel.events.observe(this, Observer { observeEvents(it) })
         viewModel.data.observe(this, Observer { observeTodayData(it) })
-        viewModel.eventsObserver.observe(this, Observer { viewModel.loadEvents() })
+        viewModel.eventsObserver.observe(this, Observer { observeEvent(it, viewModel) })
 
-        getFab().setOnClickListener {
+        getFab().setOnClickListener { _ ->
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
-                showSnack(R.string.action_added, View.OnClickListener { _ ->
-                    viewModel.delete(id)
-                })
+                showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
             })
         }
 
-        dayWidget.setAddMonthlyListener(View.OnClickListener {
-            viewModel.updateMonthly().observe(this, Observer { _ -> showSnack(R.string.action_added, null) })
+        dayWidget.setAddMonthlyListener(View.OnClickListener { _ ->
+            viewModel
+                    .updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
+                    .observe(this, Observer { showSnack(R.string.action_added, null) })
         })
+
+    }
+
+    private fun observeEvent(data: Event?, viewModel: DayViewModel) {
+        if (data == null) {
+            startActivity(Intent(requireContext(), FirstLaunchActivity::class.java))
+        } else {
+            viewModel.loadEvents()
+        }
     }
 
     private fun observeTodayData(data: TodayData?) {

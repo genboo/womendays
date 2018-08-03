@@ -7,8 +7,10 @@ import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.EventsData
+import ru.spcm.apps.womendays.model.dto.Setting
 import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.repositories.EventsRepo
+import ru.spcm.apps.womendays.repositories.SettingsRepo
 import ru.spcm.apps.womendays.tools.AbsentLiveData
 import javax.inject.Inject
 
@@ -18,11 +20,12 @@ import javax.inject.Inject
  */
 
 class DayViewModel @Inject
-internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
+internal constructor(private val eventsRepo: EventsRepo,
+                     private val settingsRepo: SettingsRepo) : ViewModel() {
 
     private val eventsSwitcher = MutableLiveData<Boolean>()
     val events: LiveData<EventsData>
-    val data: LiveData<TodayData> = eventsRepo.getTodayData()
+    val data: LiveData<TodayData>
     val eventsObserver: LiveData<Event> = eventsRepo.getLastEvent()
 
     init {
@@ -31,6 +34,13 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
                 return@switchMap eventsRepo.getEvents()
             }
             return@switchMap AbsentLiveData.create<EventsData>()
+        }
+
+        data = Transformations.switchMap(eventsSwitcher) {
+            if (it) {
+                return@switchMap eventsRepo.getTodayData()
+            }
+            return@switchMap AbsentLiveData.create<TodayData>()
         }
     }
 
@@ -42,8 +52,8 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
         return eventsRepo.save(Event(type))
     }
 
-    fun updateMonthly(): LiveData<Long> {
-        return eventsRepo.updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
+    fun updateMonthly(event: Event): LiveData<Long> {
+        return eventsRepo.updateMonthly(event)
     }
 
     fun delete(id: Long?) {

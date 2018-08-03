@@ -205,6 +205,9 @@ constructor(private val appExecutors: AppExecutors,
     @WorkerThread
     private fun getLastMonthly(calendar: Calendar): Event? {
         var lastMonthly = eventsDao.getLastMonthly(calendar.time)
+        if(lastMonthly != null) {
+            calendar.timeInMillis = lastMonthly.date.time
+        }
         do {
             calendar.add(Calendar.DAY_OF_MONTH, -1)
             val yesterdayEvent = eventsDao.getEventMonthlyAtDay(calendar.time) ?: break
