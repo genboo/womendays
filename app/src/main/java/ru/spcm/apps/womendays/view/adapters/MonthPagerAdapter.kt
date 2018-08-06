@@ -11,6 +11,7 @@ class MonthPagerAdapter(val context: Context) : EventsPagerAdapter() {
         val view = SimplyMonthView(context)
         view.setMonthParams(getMonthForPosition(position), getYearForPosition(position), Calendar.MONDAY)
         view.setEvents(events)
+        view.setOnDayClickListener(listener)
         container.addView(view)
         return view
     }

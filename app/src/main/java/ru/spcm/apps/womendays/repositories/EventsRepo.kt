@@ -92,6 +92,10 @@ constructor(private val appExecutors: AppExecutors,
         }
     }
 
+    fun getEventsByDate(date: Date): LiveData<List<Event>> {
+        return eventsDao.getEventsByDate(date)
+    }
+
     fun getLastEvent(): LiveData<Event> {
         return eventsDao.getLastEvent()
     }
@@ -204,7 +208,7 @@ constructor(private val appExecutors: AppExecutors,
     @WorkerThread
     private fun getLastMonthly(calendar: Calendar): Event? {
         var lastMonthly = eventsDao.getLastMonthly(calendar.time)
-        if(lastMonthly != null) {
+        if (lastMonthly != null) {
             calendar.timeInMillis = lastMonthly.date.time
         }
         do {

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import ru.spcm.apps.womendays.R
 import ru.spcm.apps.womendays.model.dto.EventsData
+import ru.spcm.apps.womendays.tools.DateHelper
+import ru.spcm.apps.womendays.tools.Logger
 import ru.spcm.apps.womendays.view.adapters.EventsPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.MonthPagerAdapter
 import ru.spcm.apps.womendays.view.adapters.WeekPagerAdapter
@@ -15,6 +17,7 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
 
     private val currentDate = GregorianCalendar()
     private var calendarPager: CalendarViewPager
+    private var listener: (Calendar) -> Unit = { Logger.e(this::class.java.simpleName) }
 
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
@@ -30,13 +33,13 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         LayoutInflater.from(context).inflate(R.layout.layout_calendar, this)
         calendarPager = findViewById(R.id.calendarViewPager)
 
-        val minDate = Calendar.getInstance()
+        val minDate = DateHelper.getZeroHourCalendar()
         minDate.set(DEFAULT_START_YEAR, Calendar.JANUARY, 1)
 
-        val maxDate = Calendar.getInstance()
-        maxDate.set(DEFAULT_END_YEAR, Calendar.DECEMBER, 21)
+        val maxDate = DateHelper.getZeroHourCalendar()
+        maxDate.set(DEFAULT_END_YEAR, Calendar.DECEMBER, 31)
 
-        val currentDate = Calendar.getInstance()
+        val currentDate = DateHelper.getZeroHourCalendar()
 
         val adapter: EventsPagerAdapter = when (type) {
             CALENDAR_TYPE_WEEK -> WeekPagerAdapter(context)
@@ -48,6 +51,11 @@ class CalendarView(context: Context, attrs: AttributeSet, defStyle: Int) : Frame
         calendarPager.adapter = adapter
         calendarPager.currentItem = adapter.getPositionForDay(currentDate)
 
+    }
+
+    fun setOnDayClickListener(listener: (Calendar) -> Unit) {
+        this.listener = listener
+        (calendarPager.adapter as EventsPagerAdapter).setOnDayClickListener(listener)
     }
 
     fun setEvents(events: EventsData) {

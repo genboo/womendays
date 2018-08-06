@@ -4,6 +4,7 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import ru.spcm.apps.womendays.model.dto.EventsData
+import ru.spcm.apps.womendays.tools.Logger
 import java.util.*
 
 abstract class EventsPagerAdapter : PagerAdapter() {
@@ -13,6 +14,8 @@ abstract class EventsPagerAdapter : PagerAdapter() {
     var events: EventsData = EventsData()
 
     var size = 0
+
+    internal var listener: (Calendar) -> Unit = { Logger.e(this::class.java.simpleName) }
 
     fun setEventsList(data: EventsData) {
         events = data
@@ -42,6 +45,10 @@ abstract class EventsPagerAdapter : PagerAdapter() {
 
     override fun getItemPosition(`object`: Any): Int {
         return PagerAdapter.POSITION_NONE
+    }
+
+    fun setOnDayClickListener(listener: (Calendar) -> Unit) {
+        this.listener = listener
     }
 
     abstract fun setRange(min: Calendar, max: Calendar)

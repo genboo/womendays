@@ -39,4 +39,7 @@ interface EventsDao {
     @Query("DELETE FROM Event WHERE type='MONTHLY'")
     fun clearMonthly()
 
+    @Query("SELECT * FROM Event WHERE date = :date")
+    fun getEventsByDate(date: Date): LiveData<List<Event>>
+
 }

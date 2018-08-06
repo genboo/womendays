@@ -7,11 +7,10 @@ import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.EventsData
-import ru.spcm.apps.womendays.model.dto.Setting
 import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.repositories.EventsRepo
-import ru.spcm.apps.womendays.repositories.SettingsRepo
 import ru.spcm.apps.womendays.tools.AbsentLiveData
+import java.util.*
 import javax.inject.Inject
 
 
@@ -20,13 +19,15 @@ import javax.inject.Inject
  */
 
 class DayViewModel @Inject
-internal constructor(private val eventsRepo: EventsRepo,
-                     private val settingsRepo: SettingsRepo) : ViewModel() {
+internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
 
     private val eventsSwitcher = MutableLiveData<Boolean>()
+    private val dateSwitcher = MutableLiveData<Date>()
+
     val events: LiveData<EventsData>
     val data: LiveData<TodayData>
     val eventsObserver: LiveData<Event> = eventsRepo.getLastEvent()
+    val eventsByDay: LiveData<List<Event>>
 
     init {
         events = Transformations.switchMap(eventsSwitcher) {
@@ -42,6 +43,17 @@ internal constructor(private val eventsRepo: EventsRepo,
             }
             return@switchMap AbsentLiveData.create<TodayData>()
         }
+
+        eventsByDay = Transformations.switchMap(dateSwitcher) {
+            if (it != null) {
+                return@switchMap eventsRepo.getEventsByDate(it)
+            }
+            return@switchMap AbsentLiveData.create<List<Event>>()
+        }
+    }
+
+    fun loadEventsByDate(date: Date) {
+        dateSwitcher.postValue(date)
     }
 
     fun loadEvents() {

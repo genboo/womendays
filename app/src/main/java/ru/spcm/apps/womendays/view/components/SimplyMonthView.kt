@@ -74,15 +74,15 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         monthLabel = formatter.format(calendar.time).capitalize()
     }
 
-    override fun getDayAtLocation(x: Int, y: Int): Int {
+    override fun getDayAtLocation(x: Int, y: Int): Calendar? {
         val paddedX = x - paddingStart
         if (paddedX < 0 || paddedX >= paddedWidth) {
-            return -1
+            return null
         }
         val headerHeight = monthLabelHeight + cellHeight
         val paddedY = y - paddingTop
         if (paddedY < headerHeight || paddedY >= paddedHeight) {
-            return -1
+            return null
         }
 
         val row = (paddedY - headerHeight.toInt()) / cellHeight.toInt()
@@ -90,9 +90,11 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         val index = col + row * DAYS_IN_WEEK
         val day = index + 1 - findDayOffset()
         return if (!isValidDayOfMonth(day)) {
-            -1
+            null
         } else {
-            day
+            val c = calendar.clone() as Calendar
+            c.set(Calendar.DAY_OF_MONTH, day)
+            c
         }
     }
 

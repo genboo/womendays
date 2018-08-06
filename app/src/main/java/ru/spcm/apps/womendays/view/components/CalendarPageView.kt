@@ -86,6 +86,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     private var ovulationRadius = 16f
 
+    private var listener: (Calendar) -> Unit = { Logger.e(this::class.java.simpleName) }
+
     init {
         mainTextColor = ContextCompat.getColor(context, R.color.colorText)
         todayTextColor = ContextCompat.getColor(context, R.color.colorAccent)
@@ -240,19 +242,22 @@ abstract class CalendarPageView(context: Context) : View(context) {
         when (action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 val touchedItem = getDayAtLocation(x, y)
-                if (action == MotionEvent.ACTION_DOWN && touchedItem < 0) {
+                if (action == MotionEvent.ACTION_DOWN && touchedItem == null) {
                     // Touch something that's not an item, reject event.
                     return false
                 }
             }
             MotionEvent.ACTION_UP -> {
-                val clickedDay = getDayAtLocation(x, y)
-                onDayClicked(clickedDay)
-                if (highlightedDay != clickedDay) {
-                    highlightedDay = clickedDay
-                    previouslyHighlightedDay = clickedDay
-                    createAnimation()
-                    invalidate()
+                val date = getDayAtLocation(x, y)
+                if (date != null) {
+                    val clickedDay = date.get(Calendar.DAY_OF_MONTH)
+                    onDayClicked(date)
+                    if (highlightedDay != clickedDay) {
+                        highlightedDay = clickedDay
+                        previouslyHighlightedDay = clickedDay
+                        createAnimation()
+                        invalidate()
+                    }
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
@@ -263,11 +268,11 @@ abstract class CalendarPageView(context: Context) : View(context) {
         return true
     }
 
-    private fun onDayClicked(day: Int) {
-        Logger.e("clicked day: $day")
+    private fun onDayClicked(day: Calendar) {
+        listener(day)
     }
 
-    abstract fun getDayAtLocation(x: Int, y: Int): Int
+    abstract fun getDayAtLocation(x: Int, y: Int): Calendar?
 
     private fun createAnimation() {
         cancelAnimations()
@@ -339,6 +344,10 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     fun setEvents(events: EventsData) {
         eventsData = events
+    }
+
+    fun setOnDayClickListener(listener: (Calendar) -> Unit) {
+        this.listener = listener
     }
 
     companion object {

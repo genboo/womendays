@@ -51,20 +51,20 @@ class SimplyWeekView(context: Context) : CalendarPageView(context) {
         }
     }
 
-    override fun getDayAtLocation(x: Int, y: Int): Int {
+    override fun getDayAtLocation(x: Int, y: Int): Calendar? {
         val paddedX = x - paddingLeft
         if (paddedX < 0 || paddedX >= paddedWidth) {
-            return -1
+            return null
         }
         val headerHeight = cellHeight
         val paddedY = y - paddingTop
         if (paddedY < headerHeight || paddedY >= paddedHeight) {
-            return -1
+            return null
         }
         val col = paddedX * DAYS_IN_WEEK / paddedWidth
         val c = calendar.clone() as Calendar
         c.add(Calendar.DAY_OF_MONTH, col)
-        return c.get(Calendar.DAY_OF_MONTH)
+        return c
     }
 
 }
