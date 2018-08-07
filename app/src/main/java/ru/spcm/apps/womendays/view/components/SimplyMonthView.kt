@@ -52,6 +52,7 @@ class SimplyMonthView(context: Context) : CalendarPageView(context) {
         for (day in 1..daysInMonth) {
             if (sameDay(today, day)) {
                 now = day
+                currentDay = day
                 break
             }
         }

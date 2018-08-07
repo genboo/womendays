@@ -24,6 +24,10 @@
     <string name="view_day_two">дней</string>
     <string name="view_day_three">дня</string>
 
+    <string name="event_type_monthly">Месячные</string>
+    <string name="event_type_sex">Секс</string>
+    <string name="event_type_sex_unsafe">Незащищенный секс</string>
+
 
 
     <string name="calendar_monday">пн</string>

@@ -34,6 +34,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
     private val cyclePaint = Paint()
     private val daysOfWeekPaint = Paint()
     private val highlightPaint = Paint()
+    private val selectedDayPaint = Paint()
     private val monthlyPaint = Paint()
     private val monthlyConfirmedPaint = Paint()
     private val ovulationPaint = Paint()
@@ -68,8 +69,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
     private var todayTextColor: Int = 0
 
     internal var highlightedDay = -1
-    private var previouslyHighlightedDay = -1
+    internal var currentDay = -1
     private var highlightRadius = 16f
+    private var currentDayRadius = 16f
 
     private var rippleRadius = 0f
     internal var rippleAlpha = (255 * DEFAULT_RIPPLE_ALPHA).toInt()
@@ -100,6 +102,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
         cellHeight = context.resources.getDimensionPixelSize(R.dimen.calendar_cell_height).toFloat()
         highlightRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_highlight_radius).toFloat()
+        currentDayRadius = context.resources.getDimensionPixelSize(R.dimen.calendar_current_radius).toFloat()
 
         monthPaint.color = mainTextColor
         monthPaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_month_label_size).toFloat()
@@ -127,6 +130,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
         highlightPaint.color = ContextCompat.getColor(context, R.color.colorShadow)
         highlightPaint.alpha = rippleAlpha
         highlightPaint.isAntiAlias = true
+
+        selectedDayPaint.color = ContextCompat.getColor(context, R.color.colorShadowLight)
+        selectedDayPaint.isAntiAlias = true
 
         monthlyPaint.color = ContextCompat.getColor(context, R.color.colorMonthly)
         monthlyPaint.isAntiAlias = true
@@ -161,8 +167,8 @@ abstract class CalendarPageView(context: Context) : View(context) {
     fun drawDayWithEvents(canvas: Canvas, c: Calendar, x: Float, y: Float, halfLineHeight: Float) {
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        if (day == highlightedDay) {
-            canvas.drawCircle(x, y + halfLineHeight, rippleRadius, highlightPaint)
+        if(day == currentDay){
+            canvas.drawCircle(x, y + halfLineHeight, currentDayRadius, selectedDayPaint)
         }
 
         if (day == now) {
@@ -206,6 +212,9 @@ abstract class CalendarPageView(context: Context) : View(context) {
         }
         canvas.drawText(dayFormatter.format(day), x, y, dayPaint)
 
+        if (day == highlightedDay) {
+            canvas.drawCircle(x, y + halfLineHeight, rippleRadius, highlightPaint)
+        }
     }
 
     /**
@@ -254,7 +263,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
                     onDayClicked(date)
                     if (highlightedDay != clickedDay) {
                         highlightedDay = clickedDay
-                        previouslyHighlightedDay = clickedDay
+                        currentDay = clickedDay
                         createAnimation()
                         invalidate()
                     }

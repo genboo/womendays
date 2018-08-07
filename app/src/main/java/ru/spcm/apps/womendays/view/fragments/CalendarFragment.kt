@@ -10,6 +10,8 @@ import ru.spcm.apps.womendays.model.dto.Event
 import ru.spcm.apps.womendays.model.dto.EventsData
 import ru.spcm.apps.womendays.tools.DateHelper
 import ru.spcm.apps.womendays.view.adapters.EventsListAdapter
+import ru.spcm.apps.womendays.view.components.slideIn
+import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
@@ -47,8 +49,12 @@ class CalendarFragment : BaseFragment() {
     }
 
     private fun observeEvents(data: List<Event>?) {
-        if (data != null) {
+        if (data != null && data.isNotEmpty()) {
             (list.adapter as EventsListAdapter).setItems(data)
+            contentBlock.slideIn(Gravity.BOTTOM)
+        } else {
+            contentBlock.slideOut(Gravity.BOTTOM)
+            appBarCalendar.setExpanded(true)
         }
     }
 

@@ -18,11 +18,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarCalendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent">
 
             <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
@@ -41,6 +43,7 @@
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/contentBlock"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
