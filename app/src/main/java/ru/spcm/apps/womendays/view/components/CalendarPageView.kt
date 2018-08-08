@@ -117,7 +117,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
         dayPaint.textAlign = Paint.Align.CENTER
         dayPaint.isAntiAlias = true
 
-        cyclePaint.color = ContextCompat.getColor(context, R.color.colorPrimary)
+        cyclePaint.color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
         cyclePaint.textSize = context.resources.getDimensionPixelSize(R.dimen.calendar_cycle_text_size).toFloat()
         cyclePaint.textAlign = Paint.Align.CENTER
         cyclePaint.isAntiAlias = true

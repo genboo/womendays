@@ -16,6 +16,7 @@
     <string name="action_canceled">Отменено</string>
     <string name="action_save">Сохранить</string>
     <string name="action_saved">Сохранено</string>
+    <string name="action_deleted">Удалено</string>
     <string name="action_add_monthly">Отметить месячные</string>
 
     <string name="view_days_left">осталось</string>

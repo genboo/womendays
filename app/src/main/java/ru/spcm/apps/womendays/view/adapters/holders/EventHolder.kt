@@ -15,10 +15,23 @@ class EventHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             Event.Type.SEX_SAFE -> resources.getString(R.string.event_type_sex)
             Event.Type.SEX_UNSAFE -> resources.getString(R.string.event_type_sex_unsafe)
         }
+        if (item.message.isEmpty()) {
+            message.text = ""
+            message.visibility = View.GONE
+        } else {
+            message.text = item.message
+            message.visibility = View.VISIBLE
+        }
+
+        if (item.type == Event.Type.MONTHLY) {
+            delete.visibility = View.GONE
+        } else {
+            delete.visibility = View.VISIBLE
+        }
     }
 
     fun setListener(listener: View.OnClickListener) {
-        itemView.itemBlock.setOnClickListener(listener)
+        itemView.delete.setOnClickListener(listener)
     }
 
 }

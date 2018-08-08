@@ -68,10 +68,11 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
         return eventsRepo.updateMonthly(event)
     }
 
-    fun delete(id: Long?) {
-        if (id != null) {
-            eventsRepo.delete(Event(id))
-        }
+    fun delete(id: Long): LiveData<Boolean> {
+        return eventsRepo.delete(Event(id))
     }
 
+    fun restore(event: Event) {
+        eventsRepo.save(event)
+    }
 }

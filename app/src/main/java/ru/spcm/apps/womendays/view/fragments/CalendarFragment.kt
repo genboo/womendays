@@ -44,14 +44,26 @@ class CalendarFragment : BaseFragment() {
         }
 
         list.layoutManager = LinearLayoutManager(requireContext())
-        list.adapter = EventsListAdapter(null)
+        val adapter = EventsListAdapter(null)
+        list.adapter = adapter
+        adapter.setOnItemClickListener { _, item, _ ->
+            viewModel.delete(item.id).observe(this, Observer {
+                if (it != null && it) {
+                    showSnack(R.string.action_deleted, View.OnClickListener { _ ->
+                        viewModel.restore(item)
+                    })
+                }
+            })
+        }
 
     }
 
     private fun observeEvents(data: List<Event>?) {
         if (data != null && data.isNotEmpty()) {
             (list.adapter as EventsListAdapter).setItems(data)
-            contentBlock.slideIn(Gravity.BOTTOM)
+            if (contentBlock.visibility == View.GONE) {
+                contentBlock.slideIn(Gravity.BOTTOM)
+            }
         } else {
             contentBlock.slideOut(Gravity.BOTTOM)
             appBarCalendar.setExpanded(true)

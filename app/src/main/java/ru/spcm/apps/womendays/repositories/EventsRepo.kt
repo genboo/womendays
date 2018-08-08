@@ -86,10 +86,15 @@ constructor(private val appExecutors: AppExecutors,
         return result
     }
 
-    fun delete(event: Event) {
+    fun delete(event: Event): LiveData<Boolean> {
+        val result = MutableLiveData<Boolean>()
         appExecutors.diskIO().execute {
             eventsDao.delete(event)
+            appExecutors.mainThread().execute {
+                result.postValue(true)
+            }
         }
+        return result
     }
 
     fun getEventsByDate(date: Date): LiveData<List<Event>> {

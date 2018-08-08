@@ -40,13 +40,14 @@ class TodayFragment : BaseFragment() {
 
         getFab().setOnClickListener { _ ->
             viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
-                showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
+                if (id != null) {
+                    showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
+                }
             })
         }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener { _ ->
-            viewModel
-                    .updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
+            viewModel.updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
                     .observe(this, Observer { showSnack(R.string.action_added, null) })
         })
 
