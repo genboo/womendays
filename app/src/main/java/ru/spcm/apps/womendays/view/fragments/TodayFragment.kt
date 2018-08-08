@@ -12,6 +12,8 @@ import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.view.activities.FirstLaunchActivity
 import ru.spcm.apps.womendays.view.components.fadeIn
 import ru.spcm.apps.womendays.view.components.fadeOut
+import ru.spcm.apps.womendays.view.components.slideIn
+import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
@@ -38,12 +40,21 @@ class TodayFragment : BaseFragment() {
         viewModel.data.observe(this, Observer { observeTodayData(it) })
         viewModel.eventsObserver.observe(this, Observer { observeEvent(it, viewModel) })
 
+        popup.setToggleListener {
+            if (it) {
+                getFab().slideOut(Gravity.END)
+            } else {
+                getFab().slideIn(Gravity.END)
+            }
+        }
+
         getFab().setOnClickListener { _ ->
-            viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
-                if (id != null) {
-                    showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
-                }
-            })
+            popup.toggle()
+//            viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
+//                if (id != null) {
+//                    showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
+//                }
+//            })
         }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener { _ ->
@@ -64,6 +75,7 @@ class TodayFragment : BaseFragment() {
     private fun observeTodayData(data: TodayData?) {
         if (data != null) {
             dayWidget.setData(data)
+            dayWidget.visibility = View.VISIBLE
         }
     }
 

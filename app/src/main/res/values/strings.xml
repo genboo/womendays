@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Эти дни…</string>
+    <string name="message_label">Заметка</string>
+
+
 
     <string name="menu_calendar">Календарь</string>
     <string name="menu_today">Сегодня</string>
@@ -28,8 +31,8 @@
     <string name="event_type_monthly">Месячные</string>
     <string name="event_type_sex">Секс</string>
     <string name="event_type_sex_unsafe">Незащищенный секс</string>
-
-
+    <string name="event_type_ovulation">Овуляция</string>
+    <string name="event_type_message">Заметка</string>
 
     <string name="calendar_monday">пн</string>
     <string name="calendar_tuesday">вт</string>

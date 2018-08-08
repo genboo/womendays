@@ -145,6 +145,7 @@ constructor(private val appExecutors: AppExecutors,
                     Event.Type.SEX_UNSAFE -> flag or EventsPagerAdapter.FLAG_SEX_UNSAFE
                     Event.Type.MONTHLY -> flag or EventsPagerAdapter.FLAG_MONTHLY
                     Event.Type.MONTHLY_CONFIRMED -> flag or EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED
+                    else -> flag
                 }
                 eventsData.events.put(it.date.time, flag)
             }

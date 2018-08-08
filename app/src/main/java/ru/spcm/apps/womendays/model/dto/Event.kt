@@ -25,7 +25,9 @@ data class Event(@PrimaryKey(autoGenerate = true) var id: Long) {
         SEX_SAFE,
         SEX_UNSAFE,
         MONTHLY,
-        MONTHLY_CONFIRMED
+        MONTHLY_CONFIRMED,
+        OVULATION,
+        MESSAGE,
     }
 
 }

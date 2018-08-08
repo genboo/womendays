@@ -17,4 +17,5 @@
     <dimen name="calendar_current_radius">16dp</dimen>
 
     <dimen name="today_view_button_radius">15dp</dimen>
+    <dimen name="button_borderless_radius">2dp</dimen>
 </resources>

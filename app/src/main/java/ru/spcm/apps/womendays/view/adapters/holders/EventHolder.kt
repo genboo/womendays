@@ -14,6 +14,8 @@ class EventHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             Event.Type.MONTHLY -> resources.getString(R.string.event_type_monthly)
             Event.Type.SEX_SAFE -> resources.getString(R.string.event_type_sex)
             Event.Type.SEX_UNSAFE -> resources.getString(R.string.event_type_sex_unsafe)
+            Event.Type.OVULATION -> resources.getString(R.string.event_type_ovulation)
+            Event.Type.MESSAGE -> resources.getString(R.string.event_type_message)
         }
         if (item.message.isEmpty()) {
             message.text = ""
