@@ -31,6 +31,7 @@ class FirstLaunchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first_launch)
+        window.setBackgroundDrawable(null)
         if (component == null) {
             component = (application as App).appComponent
             component?.inject(this)
@@ -56,7 +57,6 @@ class FirstLaunchActivity : AppCompatActivity() {
         }
 
         monthlyFirstDate.setOnClickListener { selectDate() }
-
     }
 
     private fun selectDate() {

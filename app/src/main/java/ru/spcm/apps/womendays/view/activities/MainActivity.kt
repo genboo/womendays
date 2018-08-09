@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         bottomMenu.setOnNavigationItemSelectedListener(this)
         navigator.goToToday()
+        window.setBackgroundDrawable(null)
     }
 
     fun getView(): View {
