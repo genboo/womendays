@@ -60,8 +60,8 @@ internal constructor(private val eventsRepo: EventsRepo) : ViewModel() {
         eventsSwitcher.postValue(true)
     }
 
-    fun save(type: Event.Type): LiveData<Long> {
-        return eventsRepo.save(Event(type))
+    fun save(event: Event): LiveData<Long> {
+        return eventsRepo.save(event)
     }
 
     fun updateMonthly(event: Event): LiveData<Long> {

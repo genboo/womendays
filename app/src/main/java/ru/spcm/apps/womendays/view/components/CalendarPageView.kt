@@ -82,6 +82,7 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
     private var eventsData: EventsData = EventsData()
     private val heartBitmap: Bitmap
+    private val heartBrokenBitmap: Bitmap
 
     private var dayTextSize: Float = 14f
     private var todayTextSize: Float = 16f
@@ -147,16 +148,26 @@ abstract class CalendarPageView(context: Context) : View(context) {
         ovulationPaint.strokeWidth = context.resources.getDimensionPixelSize(R.dimen.calendar_ovulation_width).toFloat()
         ovulationPaint.style = Paint.Style.STROKE
 
-        val drawable = ContextCompat.getDrawable(context, R.drawable.ic_heart)
-
-        if (drawable != null) {
+        val drawableHeart = ContextCompat.getDrawable(context, R.drawable.ic_heart)
+        if (drawableHeart != null) {
             heartBitmap = Bitmap.createBitmap(cellHeight.toInt() - shiftIcon, cellHeight.toInt() - shiftIcon, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(heartBitmap)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
-            drawable.draw(canvas)
+            drawableHeart.setBounds(0, 0, canvas.width, canvas.height)
+            drawableHeart.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
+            drawableHeart.draw(canvas)
         } else {
             heartBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        }
+
+        val drawableHeartBroken = ContextCompat.getDrawable(context, R.drawable.ic_heart_broken)
+        if (drawableHeartBroken != null) {
+            heartBrokenBitmap = Bitmap.createBitmap(cellHeight.toInt() - shiftIcon, cellHeight.toInt() - shiftIcon, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(heartBrokenBitmap)
+            drawableHeartBroken.setBounds(0, 0, canvas.width, canvas.height)
+            drawableHeartBroken.setTint(ContextCompat.getColor(context, R.color.colorMonthly))
+            drawableHeartBroken.draw(canvas)
+        } else {
+            heartBrokenBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         }
 
     }
@@ -183,13 +194,11 @@ abstract class CalendarPageView(context: Context) : View(context) {
 
         val flag: Int = eventsData.events[c.timeInMillis] ?: 0
         if (flag != 0) {
-            if (flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0) {
-                canvas.drawBitmap(heartBitmap, x - heartBitmap.width / 2, y - cellHeight / 2, monthlyPaint)
-            }
-
             if (flag and EventsPagerAdapter.FLAG_SEX_UNSAFE > 0) {
-                canvas.drawBitmap(heartBitmap, x - cellWidth / 2, y - cellHeight / 2, monthlyPaint)
-                canvas.drawCircle(x - cellWidth / 2, y - cellHeight / 2 + shiftIcon, 6f, monthlyPaint)
+                canvas.drawBitmap(heartBrokenBitmap, x - heartBitmap.width / 2, y - cellHeight / 2, monthlyPaint)
+            }
+            if(flag and EventsPagerAdapter.FLAG_SEX_SAFE > 0){
+                canvas.drawBitmap(heartBitmap, x - heartBitmap.width / 2, y - cellHeight / 2, monthlyPaint)
             }
 
             if (flag and EventsPagerAdapter.FLAG_MONTHLY > 0 && flag and EventsPagerAdapter.FLAG_MONTHLY_CONFIRMED == 0) {

@@ -42,4 +42,9 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/colorAccent</item>
     </style>
+
+    <style name="Button.Selector" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:background">@drawable/bg_button_selector</item>
+        <item name="android:padding">4dp</item>
+    </style>
 </resources>

@@ -40,7 +40,7 @@ class TodayFragment : BaseFragment() {
         viewModel.data.observe(this, Observer { observeTodayData(it) })
         viewModel.eventsObserver.observe(this, Observer { observeEvent(it, viewModel) })
 
-        popup.setToggleListener {
+        popup.setOnToggleListener {
             if (it) {
                 getFab().slideOut(Gravity.END)
             } else {
@@ -48,20 +48,22 @@ class TodayFragment : BaseFragment() {
             }
         }
 
-        getFab().setOnClickListener { _ ->
-            popup.toggle()
-//            viewModel.save(Event.Type.SEX_SAFE).observe(this, Observer { id ->
-//                if (id != null) {
-//                    showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
-//                }
-//            })
+        popup.setOnSaveListener { type, message ->
+            val event = Event(type)
+            event.message = message
+            viewModel.save(event).observe(this, Observer { id ->
+                if (id != null) {
+                    showSnack(R.string.action_added, View.OnClickListener { viewModel.delete(id) })
+                }
+            })
         }
+
+        getFab().setOnClickListener { popup.toggle() }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener { _ ->
             viewModel.updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
                     .observe(this, Observer { showSnack(R.string.action_added, null) })
         })
-
     }
 
     private fun observeEvent(data: Event?, viewModel: DayViewModel) {
