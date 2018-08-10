@@ -50,8 +50,8 @@ class EventTypeSelectorView(context: Context, attrs: AttributeSet) : LinearLayou
                 selectorBlock.addView(image)
             }
         }
-        addView(selectorBlock)
         addView(label)
+        addView(selectorBlock)
     }
 
     fun getSelectedType(): Event.Type {
