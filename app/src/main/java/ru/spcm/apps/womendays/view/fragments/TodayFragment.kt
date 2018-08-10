@@ -12,8 +12,6 @@ import ru.spcm.apps.womendays.model.dto.TodayData
 import ru.spcm.apps.womendays.view.activities.FirstLaunchActivity
 import ru.spcm.apps.womendays.view.components.fadeIn
 import ru.spcm.apps.womendays.view.components.fadeOut
-import ru.spcm.apps.womendays.view.components.slideIn
-import ru.spcm.apps.womendays.view.components.slideOut
 import ru.spcm.apps.womendays.viewmodel.DayViewModel
 
 /**
@@ -42,9 +40,9 @@ class TodayFragment : BaseFragment() {
 
         popup.setOnToggleListener {
             if (it) {
-                getFab().slideOut(Gravity.END)
+                fab.fadeOut()
             } else {
-                getFab().slideIn(Gravity.END)
+                fab.fadeIn()
             }
         }
 
@@ -58,7 +56,7 @@ class TodayFragment : BaseFragment() {
             })
         }
 
-        getFab().setOnClickListener { popup.toggle() }
+        fab.setOnClickListener { popup.toggle() }
 
         dayWidget.setAddMonthlyListener(View.OnClickListener { _ ->
             viewModel.updateMonthly(Event(Event.Type.MONTHLY_CONFIRMED))
@@ -95,14 +93,5 @@ class TodayFragment : BaseFragment() {
         return getString(R.string.menu_today)
     }
 
-    override fun onResume() {
-        super.onResume()
-        getFab().fadeIn()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        getFab().fadeOut()
-    }
 }
 

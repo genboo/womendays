@@ -54,14 +54,7 @@ class PopupView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
             shadow.layoutParams = params
             shadow.background = resources.getDrawable(R.drawable.shadow, context.theme)
             shadow.visibility = View.GONE
-            var index = 0
-            for (i in 0 until group.childCount) {
-                if (group.getChildAt(i).id == this.id) {
-                    index = i
-                    break
-                }
-            }
-            group.addView(shadow, index)
+            group.addView(shadow)
             shadow.setOnClickListener { toggle() }
         }
     }
@@ -74,6 +67,8 @@ class PopupView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
                 shadow.visibility = View.GONE
                 toggleListener(false)
             } else {
+                shadow.bringToFront()
+                bringToFront()
                 visibility = View.VISIBLE
                 shadow.visibility = View.VISIBLE
                 toggleListener(true)

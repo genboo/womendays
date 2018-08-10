@@ -3,7 +3,6 @@ package ru.spcm.apps.womendays.view.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -35,10 +34,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     fun getView(): View {
         return mainLayout
-    }
-
-    fun getFab(): FloatingActionButton {
-        return fab
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

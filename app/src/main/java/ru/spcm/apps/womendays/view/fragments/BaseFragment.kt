@@ -61,8 +61,8 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected fun showSnack(text: Int, action: View.OnClickListener?) {
-        if (activity != null) {
-            val snackBar = Snackbar.make((activity as MainActivity).getView(), text, Snackbar.LENGTH_LONG)
+        if (activity != null && view != null) {
+            val snackBar = Snackbar.make(view as View, text, Snackbar.LENGTH_LONG)
             if (action != null) {
                 snackBar.setAction(ru.spcm.apps.womendays.R.string.action_cancel, action)
             }
@@ -72,10 +72,6 @@ abstract class BaseFragment : Fragment() {
 
     open fun updateTitle(title: String) {
         toolbar?.title = title
-    }
-
-    fun getFab(): FloatingActionButton {
-        return (activity as MainActivity).getFab()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
